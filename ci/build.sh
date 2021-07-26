@@ -22,11 +22,13 @@ dci () {
 
 frontend_build () {
 
-    # dc run \
-    #    --rm \
-    #    --no-deps \
-    #    frontend \
-    #    bash release.sh
+    echo "PUBLIC_URL=/" > frontend/.env
+
+    dc run \
+       --rm \
+       --no-deps \
+       frontend \
+       bash release.sh
 
     docker build \
         --tag "${image_prefix}/frontend:latest" \

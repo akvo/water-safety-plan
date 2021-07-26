@@ -1,14 +1,8 @@
 from fastapi import FastAPI
 
-app = FastAPI()
+app = FastAPI(root_path="/api")
 
 
 @app.get("/")
-def read_root():
-    return {"Hello": "World Test"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str = None):
-    return {"item_id": item_id, "q": q}
-
+def read_main():
+    return {"message": "Hello World"}
