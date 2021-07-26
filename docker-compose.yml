@@ -1,0 +1,20 @@
+---
+version: "3"
+services:
+  mainnetwork:
+    image: alpine:3.14.0
+    command: ["tail", "-f", "/dev/null"]
+  frontend:
+    network_mode: service:mainnetwork
+    image: akvo/akvo-node-14-alpine:20210106.152005.1864760
+    command: ["./start.sh"]
+    volumes:
+      - ./frontend:/app:delegated
+    working_dir: /app
+  backend:
+    network_mode: service:mainnetwork
+    image: amancevice/pandas:0.24.2-slim
+    command: ["./dev.sh"]
+    volumes:
+      - ./backend:/app:delegated
+    working_dir: /app
