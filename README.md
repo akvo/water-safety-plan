@@ -33,7 +33,12 @@ see: [setupProxy.js](https://github.com/akvo/water-safety-plan/blob/main/fronten
 # Production
 
 ```bash
+export CI_COMMIT='local'
 ./ci/build.sh
+```
+This will generate two docker images with prefix `eu.gcr.io/akvo-lumen/water-safety-plan` for backend and frontend
+
+```bash
 docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d
 ```
 
