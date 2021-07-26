@@ -33,6 +33,7 @@ see: [setupProxy.js](https://github.com/akvo/water-safety-plan/blob/main/fronten
 # Production
 
 ```bash
+./ci/build.sh
 docker-compose -f docker-compose.yml -f docker-compose.ci.yml up -d
 ```
 
