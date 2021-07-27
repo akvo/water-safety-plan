@@ -46,9 +46,9 @@ backend_build () {
 frontend_build
 backend_build
 
-# #test-connection
-# if ! dci run -T ci ./basic.sh; then
-#   dci logs
-#   echo "Build failed when running basic.sh"
-#   exit 1
-# fi
+#test-connection
+if ! dci run -T ci ./basic.sh; then
+  dci logs
+  echo "Build failed when running basic.sh"
+  exit 1
+fi
