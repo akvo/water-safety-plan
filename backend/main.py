@@ -1,3 +1,4 @@
+import uvicorn
 from fastapi import FastAPI
 import pandas as pd
 import json
@@ -48,3 +49,6 @@ async def get_data_raw(page: int = 1, limit: int = 0):
         }
     data = data.rename(columns=columns)
     return data.to_dict('records')
+
+if __name__ == "__main__":
+    uvicorn.run(app, port=5000)

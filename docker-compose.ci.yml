@@ -9,6 +9,7 @@ services:
     command: ["nginx", "-g", "daemon off;"]
   backend:
     image: eu.gcr.io/akvo-lumen/water-safety-plan/backend:latest
+    command: ["python", "main.py"]
   ci:
     network_mode: service:mainnetwork
     image: alpine:3.14.0

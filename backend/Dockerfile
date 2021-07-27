@@ -9,4 +9,4 @@ RUN set -e; \
     pip check
 
 
-CMD ["sh", "run.sh"]
+CMD ["python", "main.py"]

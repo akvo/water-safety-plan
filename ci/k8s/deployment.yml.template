@@ -40,12 +40,12 @@ spec:
             - containerPort: 5000
           readinessProbe:
             httpGet:
-              path: /
+              path: /health-check
               port: 5000
             initialDelaySeconds: 30
           livenessProbe:
             httpGet:
-              path: /
+              path: /health-check
               port: 5000
             initialDelaySeconds: 30
           resources:
