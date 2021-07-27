@@ -55,5 +55,6 @@ def get_data_raw(page: int = 1, limit: int = 0):
     data = data.rename(columns=columns)
     return data.to_dict('records')
 
+
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=5000)
+    uvicorn.run(app, host="0.0.0.0", port=5000)

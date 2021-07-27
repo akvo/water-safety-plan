@@ -43,8 +43,8 @@ backend_build () {
 }
 
 
-frontend_build
 backend_build
+frontend_build
 
 #test-connection
 if ! dci run -T ci ./basic.sh; then
