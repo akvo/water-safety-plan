@@ -6,6 +6,11 @@ import json
 app = FastAPI(root_path="/api")
 
 
+@app.get("/health-check")
+def health_check():
+    return "OK"
+
+
 @app.get("/")
 def read_main():
     return {"message": "Hello World"}
@@ -23,7 +28,7 @@ def get_data():
 
 
 @app.get('/data/raw')
-async def get_data_raw(page: int = 1, limit: int = 0):
+def get_data_raw(page: int = 1, limit: int = 0):
     with open('./data/config.json', 'r') as cfg:
         cfg = json.load(cfg)
     columns = {}
@@ -51,4 +56,4 @@ async def get_data_raw(page: int = 1, limit: int = 0):
     return data.to_dict('records')
 
 if __name__ == "__main__":
-    uvicorn.run(app, port=5000)
+    uvicorn.run(app, host="127.0.0.1", port=5000)
