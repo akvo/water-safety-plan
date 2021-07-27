@@ -1,10 +1,9 @@
 ---
 version: "3"
 services:
-  mainnetwork:
-    ports:
-      - 8080:80
-      - 5000:5000
+# mainnetwork:
+#   ports:
+#     - 8080:80
   frontend:
     image: eu.gcr.io/akvo-lumen/water-safety-plan/frontend:latest
     command: ["nginx", "-g", "daemon off;"]
