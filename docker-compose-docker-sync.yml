@@ -1,0 +1,9 @@
+---
+version: "3"
+services:
+  frontend:
+    volumes:
+      - wsp-docker-sync:/app/node_modules:nocopy
+volumes:
+  wsp-docker-sync:
+    external: true
