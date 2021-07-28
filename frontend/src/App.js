@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./App.scss";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Tabs } from "antd";
 import Logo from "./images/logo.png";
 import {
   DashboardOutlined,
@@ -11,8 +11,11 @@ import {
   InboxOutlined,
 } from "@ant-design/icons";
 
+const dummyTab = Array.apply(null, Array(30)).map((_, i) => `Tab-${i}`);
+
 const pageIsUnderConstruction = true;
 const { Sider, Content } = Layout;
+const { TabPane } = Tabs;
 
 const MainMenu = () => {
   return (
@@ -44,9 +47,14 @@ const MainMenu = () => {
 
 const App = () => {
   const [collapse, setCollapse] = useState(false);
+  const [tablist, setTablist] = useState(dummyTab);
 
   const toggleCollapse = () => {
     setCollapse(collapse ? false : true);
+  };
+
+  const handleEditTab = (x) => {
+    setTablist(tablist.filter((t) => t !== x));
   };
 
   if (pageIsUnderConstruction) {
@@ -58,6 +66,7 @@ const App = () => {
       </Layout>
     );
   }
+
   return (
     <Layout id="main">
       <Sider
@@ -75,7 +84,25 @@ const App = () => {
         <MainMenu />
       </Sider>
       <Layout className="site-layout">
-        <Content className="site-content"></Content>
+        <Content className="site-content">
+          <Tabs
+            defaultActiveKey="1"
+            type="editable-card"
+            size="small"
+            className="site-tab"
+            onEdit={handleEditTab}
+          >
+            {tablist.map((x) => (
+              <TabPane
+                tab={x === "Tab-0" ? "Overview" : x}
+                key={x}
+                closable={x !== "Tab-0"}
+              >
+                Content of card {x}
+              </TabPane>
+            ))}
+          </Tabs>
+        </Content>
       </Layout>
     </Layout>
   );
