@@ -1,18 +1,54 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.scss";
 import { Layout, Menu } from "antd";
+import Logo from "./images/logo.png";
 import {
-  UserOutlined,
-  VideoCameraOutlined,
-  UploadOutlined,
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
+  DashboardOutlined,
+  FundOutlined,
+  ControlOutlined,
+  SettingOutlined,
+  TeamOutlined,
+  InboxOutlined,
 } from "@ant-design/icons";
 
 const pageIsUnderConstruction = true;
-const { Sider, Header, Content } = Layout;
+const { Sider, Content } = Layout;
+
+const MainMenu = () => {
+  return (
+    <Menu theme="light" mode="inline" defaultSelectedKeys={["overview"]}>
+      <Menu.Item key="overview" icon={<DashboardOutlined />}>
+        Overview
+      </Menu.Item>
+      <Menu.Item key="inbox" icon={<InboxOutlined />}>
+        Inbox
+      </Menu.Item>
+      <Menu.Item key="vas" icon={<FundOutlined />}>
+        Value Added Services
+      </Menu.Item>
+      <Menu.SubMenu
+        key="administration"
+        icon={<ControlOutlined />}
+        title="Administration"
+      >
+        <Menu.Item key="users" icon={<TeamOutlined />}>
+          Manage Users
+        </Menu.Item>
+        <Menu.Item key="setting" icon={<SettingOutlined />}>
+          Account Setting
+        </Menu.Item>
+      </Menu.SubMenu>
+    </Menu>
+  );
+};
 
 const App = () => {
+  const [collapse, setCollapse] = useState(false);
+
+  const toggleCollapse = () => {
+    setCollapse(collapse ? false : true);
+  };
+
   if (pageIsUnderConstruction) {
     return (
       <Layout id="underconstruction">
@@ -24,38 +60,22 @@ const App = () => {
   }
   return (
     <Layout id="main">
-      <Sider theme="light" trigger={null} collapsible collapsed={false}>
-        <div className="logo" />
-        <Menu theme="light" mode="inline" defaultSelectedKeys={["1"]}>
-          <Menu.Item key="1" icon={<UserOutlined />}>
-            nav 1
-          </Menu.Item>
-          <Menu.Item key="2" icon={<VideoCameraOutlined />}>
-            nav 2
-          </Menu.Item>
-          <Menu.Item key="3" icon={<UploadOutlined />}>
-            nav 3
-          </Menu.Item>
-        </Menu>
+      <Sider
+        className="site-sidebar-menu"
+        theme="light"
+        collapsible
+        collapsed={collapse}
+        onCollapse={toggleCollapse}
+        width={220}
+        collapsedWidth={50}
+      >
+        <div className="logo">
+          <img src={Logo} alt="logo"></img>
+        </div>
+        <MainMenu />
       </Sider>
       <Layout className="site-layout">
-        <Header className="site-layout-background" style={{ padding: 0 }}>
-          {true ? (
-            <MenuFoldOutlined className="trigger" />
-          ) : (
-            <MenuUnfoldOutlined className="trigger" />
-          )}
-        </Header>
-        <Content
-          className="site-layout-background"
-          style={{
-            margin: "24px 16px",
-            padding: 24,
-            minHeight: 280,
-          }}
-        >
-          Content
-        </Content>
+        <Content className="site-content"></Content>
       </Layout>
     </Layout>
   );

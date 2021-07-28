@@ -1,41 +1,65 @@
 @import "~antd/dist/antd.css";
 
 #underconstruction {
-    min-height: 100vh;
+  min-height: 100vh;
 
-    h1 {
-        margin: auto;
-        text-transform: uppercase;
-        text-align: center;
+  h1 {
+    margin: auto;
+    text-transform: uppercase;
+    text-align: center;
 
-        small {
-            display: block;
-        }
+    small {
+      display: block;
     }
+  }
 }
 
 #main {
-    .trigger {
-        padding: 0 24px;
-        font-size: 18px;
-        line-height: 64px;
-        cursor: pointer;
-        transition: color 0.3s;
+  .site-sidebar-menu {
+    overflow: auto;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    left: 0;
 
-        &hover {
-            color: #1890ff;
-        }
+    .logo {
+      margin: 17.5px 25.5px;
+      transition: all 0.15s ease-out;
 
-        .logo {
-            height: 32px;
-            margin: 16px;
-            background: rgba(255, 255, 255, 0.3);
-        }
+      img {
+        height: 40px;
+        transition: all 0.15s ease-out;
+      }
     }
-}
 
-.site-layout {
-    .site-layout-background {
-        background: #fff;
+    ul {
+      li {
+        margin-bottom: 0px;
+        margin-top: 0px;
+        height: 45px;
+        line-height: 45px;
+      }
     }
+  }
+
+  .site-sidebar-menu.ant-layout-sider-collapsed {
+    .logo {
+      height: 0;
+      margin: 0;
+
+      img {
+        height: 0;
+      }
+    }
+  }
+
+  .site-layout {
+    min-height: calc(100vh - 48px);
+
+    .site-content {
+      background: #fff;
+      margin: 24px 16px;
+      padding: 24px;
+    }
+  }
 }
