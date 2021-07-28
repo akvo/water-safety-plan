@@ -1,0 +1,25 @@
+#overview {
+    margin: -24px;
+
+    .ant-tabs-tabpane {
+        padding: 16px;
+        background: #fff;
+        min-height: calc(100vh - 86px);
+    }
+
+    .ant-tabs-nav {
+        margin-bottom: 0px;
+
+        .ant-tabs-tab {
+            border: none;
+        }
+
+        .close-tab {
+            color: red;
+        }
+
+        .ant-tabs-nav-more {
+            background: #fff;
+        }
+    }
+}

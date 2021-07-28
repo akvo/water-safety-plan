@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./App.scss";
+import "./styles/app.scss";
 import { Layout, Menu, Tabs } from "antd";
 import Logo from "./images/logo.png";
 import {
@@ -10,12 +10,10 @@ import {
   TeamOutlined,
   InboxOutlined,
 } from "@ant-design/icons";
+import * as Page from "./page";
 
-const dummyTab = Array.apply(null, Array(30)).map((_, i) => `Tab-${i}`);
-
-const pageIsUnderConstruction = true;
+const pageIsUnderConstruction = false;
 const { Sider, Content } = Layout;
-const { TabPane } = Tabs;
 
 const MainMenu = () => {
   return (
@@ -47,14 +45,9 @@ const MainMenu = () => {
 
 const App = () => {
   const [collapse, setCollapse] = useState(false);
-  const [tablist, setTablist] = useState(dummyTab);
 
   const toggleCollapse = () => {
     setCollapse(collapse ? false : true);
-  };
-
-  const handleEditTab = (x) => {
-    setTablist(tablist.filter((t) => t !== x));
   };
 
   if (pageIsUnderConstruction) {
@@ -85,23 +78,7 @@ const App = () => {
       </Sider>
       <Layout className="site-layout">
         <Content className="site-content">
-          <Tabs
-            defaultActiveKey="1"
-            type="editable-card"
-            size="small"
-            className="site-tab"
-            onEdit={handleEditTab}
-          >
-            {tablist.map((x) => (
-              <TabPane
-                tab={x === "Tab-0" ? "Overview" : x}
-                key={x}
-                closable={x !== "Tab-0"}
-              >
-                Content of card {x}
-              </TabPane>
-            ))}
-          </Tabs>
+          <Page.Overview />
         </Content>
       </Layout>
     </Layout>
