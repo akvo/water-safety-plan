@@ -23,18 +23,22 @@ def excel_cols():
         n += 1
 
 
-def findUnit(c):
+def find_unit(c):
     u = re.search(r'\((.*?)\)', c)
     if u:
         return u.group(1)
     return False
 
 
+def trim_uuid(x):
+    return "-".join(x.split("-")[1:-1])
+
+
 sheets = load_workbook(source, read_only=True).sheetnames
 sheets = list(filter(lambda x: '|' in x, sheets))
 registration = list(filter(lambda x: 'registration' in x, sheets))[0]
 regdf = pd.read_excel(source, registration)
-uuid_list = [uuid.uuid4() for _ in range(len(regdf.index))]
+uuid_list = [trim_uuid(uuid.uuid4()) for _ in range(len(regdf.index))]
 
 configs = []
 for tab in sheets:
@@ -55,7 +59,7 @@ for tab in sheets:
         dtype = str(df[col].dtypes.type)
         dtype = re.search(r'\'(.*?)\'', dtype).group(0)
         dtype = dtype.replace("'", "").replace('numpy.', '')
-        unit = findUnit(name)
+        unit = find_unit(name)
         name = name.split(' (')[0]
         name = name.strip().replace('_', ' ').title()
         meta = False
@@ -72,7 +76,7 @@ for tab in sheets:
         col_rename.update({col: strings[idx]})
     df = df.rename(columns=col_rename)
     df = df.apply(lambda x: x.fillna(0)
-                  if x.dtype.kind in 'biufc' else x.fillna(False))
+                  if x.dtype.kind in 'biufc' else x.fillna("-"))
     result = './data/{}.csv'.format(sheet['type'])
     if tab != registration:
         Path("./data/{}".format(sheet['type'])).mkdir(parents=True,
