@@ -5,64 +5,81 @@ import itertools
 import string
 import uuid
 import json
+from pathlib import Path
 
 source = './dummy.xlsx'
-metadata = ['Submission Date', 'uuid', '#lat_deg', '#lon_deg', '#photo']
-ignore = ['#geocoded_column']
+metadata = ['Submission Date']
+metadata_prefix = ["#"]
+ignore = ["datapoint"]
+Path("./data").mkdir(parents=True, exist_ok=True)
 
 
 def excel_cols():
     n = 1
     while True:
-        repeater = itertools.product(string.ascii_uppercase, repeat=n)
-        yield from (''.join(group) for group in repeater)
+        azstring = itertools.product(string.ascii_uppercase, repeat=n)
+        azstring = (''.join(group) for group in azstring)
+        yield from azstring
         n += 1
 
 
-def find_unit(c):
+def findUnit(c):
     u = re.search(r'\((.*?)\)', c)
     if u:
         return u.group(1)
     return False
 
 
-def fill_with(c):
-    if c in 'biufc':
-        return 0
-    return False
-
-
 sheets = load_workbook(source, read_only=True).sheetnames
-df = pd.read_excel(source, sheets[0])
-df = df.drop(columns=ignore, axis=1)
-df['uuid'] = [uuid.uuid4() for _ in range(len(df.index))]
-strings = list(itertools.islice(excel_cols(), df.shape[1]))
-col_rename = {}
-config = []
-for idx, col in enumerate(list(df.columns)):
-    name = col.replace('#', '')
-    dtype = str(df[col].dtypes.type)
-    dtype = re.search(r'\'(.*?)\'', dtype)
-    dtype = dtype.group(0)
-    dtype = dtype.replace("'", "").replace('numpy.', '')
-    unit = find_unit(name)
-    name = name.split(' (')[0]
-    name = name.strip().replace('_', ' ').title()
-    meta = False
-    if col in metadata:
-        meta = True
-    config.append({
-        'name': name,
-        'alias': strings[idx],
-        'original': col,
-        'unit': unit,
-        'meta': meta,
-        'dtype': dtype
-        })
-    col_rename.update({col: strings[idx]})
+sheets = list(filter(lambda x: '|' in x, sheets))
+registration = list(filter(lambda x: 'registration' in x, sheets))[0]
+regdf = pd.read_excel(source, registration)
+uuid_list = [uuid.uuid4() for _ in range(len(regdf.index))]
 
-df = df.rename(columns=col_rename)
-df = df.apply(lambda x: x.fillna(fill_with(x.dtype.kind)))
-df.to_csv('./results/data.csv', index=False)
-with open('./results/config.json', 'w') as f:
-    json.dump(config, f)
+configs = []
+for tab in sheets:
+    definitions = []
+    col_rename = {}
+    sheet = tab.split('|')
+    sheet = {
+        'type': sheet[0],
+        'name': sheet[1],
+        'file': sheet[1].lower().replace(' ', '_')
+    }
+    df = pd.read_excel(source, tab)
+    df['uuid'] = df['datapoint'].apply(lambda x: uuid_list[int(x) - 1])
+    df = df.drop(columns=ignore, axis=1)
+    strings = list(itertools.islice(excel_cols(), df.shape[1]))
+    for idx, col in enumerate(list(df.columns)):
+        name = col.replace('#', '')
+        dtype = str(df[col].dtypes.type)
+        dtype = re.search(r'\'(.*?)\'', dtype).group(0)
+        dtype = dtype.replace("'", "").replace('numpy.', '')
+        unit = findUnit(name)
+        name = name.split(' (')[0]
+        name = name.strip().replace('_', ' ').title()
+        meta = False
+        if col in metadata:
+            meta = True
+        definitions.append({
+            'name': name,
+            'alias': strings[idx],
+            'original': col,
+            'unit': unit,
+            'meta': meta,
+            'dtype': dtype
+        })
+        col_rename.update({col: strings[idx]})
+    df = df.rename(columns=col_rename)
+    df = df.apply(lambda x: x.fillna(0)
+                  if x.dtype.kind in 'biufc' else x.fillna(False))
+    result = './data/{}.csv'.format(sheet['type'])
+    if tab != registration:
+        Path("./data/{}".format(sheet['type'])).mkdir(parents=True,
+                                                      exist_ok=True)
+        result = "./data/{}/{}.csv".format(sheet['type'], sheet['file'])
+    df.to_csv(result, index=False)
+    sheet.update({'definition': definitions})
+    configs.append(sheet)
+with open('./data/configs.json', 'w') as f:
+    json.dump(configs, f)
