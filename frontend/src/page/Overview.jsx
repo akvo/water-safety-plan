@@ -39,7 +39,9 @@ const Main = ({ handleEditTab, handleActiveTab }) => {
 
 const Overview = () => {
   const tabList = UIStore.useState((t) => t.tabs);
+  const instances = UIStore.useState((i) => i.instances);
   const tabActive = UIStore.useState((t) => t.tabActive);
+
   const handleEditTab = (x) => {
     UIStore.update((u) => {
       u.tabs = tabList.filter((t) => t !== x);
@@ -53,9 +55,20 @@ const Overview = () => {
   };
 
   const handleActiveTab = (x) => {
-    UIStore.update((u) => {
-      u.tabActive = x;
-    });
+    if (!instances?.[x] && x !== "overview") {
+      fetch(`/api/datapoints/${x}`)
+        .then((res) => res.json())
+        .then((data) => {
+          UIStore.update((i) => {
+            i.instances = { ...instances, ...{ [x]: data } };
+            i.tabActive = x;
+          });
+        });
+    } else {
+      UIStore.update((u) => {
+        u.tabActive = x;
+      });
+    }
   };
 
   return (
@@ -64,7 +77,7 @@ const Overview = () => {
       activeKey={tabActive}
       type="editable-card"
       size="small"
-      id="overview"
+      id="overview-tabs"
       onEdit={handleEditTab}
       onTabClick={handleActiveTab}
     >

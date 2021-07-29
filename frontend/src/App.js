@@ -21,9 +21,6 @@ const MainMenu = () => {
       <Menu.Item key="overview" icon={<DashboardOutlined />}>
         Overview
       </Menu.Item>
-      <Menu.Item key="inbox" icon={<InboxOutlined />}>
-        Inbox
-      </Menu.Item>
       <Menu.Item key="vas" icon={<FundOutlined />}>
         Value Added Services
       </Menu.Item>
