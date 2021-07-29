@@ -3,12 +3,11 @@ import { Tabs } from "antd";
 import "../styles/overview.scss";
 import { DashboardOutlined, CloseCircleTwoTone } from "@ant-design/icons";
 import { Maps } from "../components";
+import { UIStore } from "../data/state";
 
 const { TabPane } = Tabs;
 
-const dummyTab = Array.apply(null, Array(30)).map((_, i) => `Tab-${i}`);
-
-const Main = () => {
+const Main = ({ handleEditTab }) => {
   const [data, setData] = useState([]);
   const [markers, setMarkers] = useState([]);
 
@@ -21,19 +20,23 @@ const Main = () => {
   }, [data]);
   useEffect(() => {
     if (markers.length === 0) {
-      fetch("/json/example-points.json")
+      fetch("/api/datapoints")
         .then((res) => res.json())
         .then((data) => setMarkers(data));
     }
   }, [markers]);
 
-  return <Maps projects={data} markers={markers} />;
+  return (
+    <Maps projects={data} markers={markers} handleEditTab={handleEditTab} />
+  );
 };
 
 const Overview = () => {
-  const [tablist, setTablist] = useState(dummyTab);
+  const currentTabs = UIStore.useState((t) => t.tabs);
   const handleEditTab = (x) => {
-    setTablist(tablist.filter((t) => t !== x));
+    UIStore.update((u) => {
+      u.tabs = currentTabs.filter((t) => t !== x);
+    });
   };
 
   return (
@@ -45,23 +48,26 @@ const Overview = () => {
       id="overview"
       onEdit={handleEditTab}
     >
-      {tablist.map((x, i) => (
+      <TabPane
+        tab={
+          <span>
+            <DashboardOutlined />
+            Overview
+          </span>
+        }
+        key={"overview"}
+        closable={false}
+      >
+        <Main handleEditTab={handleEditTab} />
+      </TabPane>
+      {currentTabs.map((x, i) => (
         <TabPane
-          tab={
-            !i ? (
-              <span>
-                <DashboardOutlined />
-                Overview
-              </span>
-            ) : (
-              x
-            )
-          }
+          tab={x}
           key={x}
-          closable={i !== 0}
+          closable={true}
           closeIcon={<CloseCircleTwoTone twoToneColor="#eb2f96" />}
         >
-          {i !== 0 ? `Content of card ${x}` : <Main />}
+          Content of {x}
         </TabPane>
       ))}
     </Tabs>

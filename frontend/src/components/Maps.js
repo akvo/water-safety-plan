@@ -6,12 +6,29 @@ import {
   Geography,
   Marker,
 } from "react-simple-maps";
+import { Tooltip } from "antd";
+import { CloseCircleTwoTone } from "@ant-design/icons";
 import { scaleQuantile } from "d3-scale";
 import "../styles/maps.scss";
+import { UIStore } from "../data/state";
 
 const geoUrl = "/json/mali-topo.json";
 
-const Maps = ({ projects, markers }) => {
+const handleMarkerClick = ({ uuid }) => {
+  const { currentState } = UIStore;
+  const { tabs } = currentState;
+  const available = tabs.filter((t) => t === uuid);
+  if (!available.length) {
+    const newTabs = [...[uuid], ...tabs];
+    UIStore.update((u) => {
+      u.tabs = newTabs;
+    });
+  }
+};
+
+const Maps = ({ projects, markers, handleEditTab }) => {
+  const { currentState } = UIStore;
+  const { tabs } = currentState;
   const [province, setProvince] = useState(null);
   const colorScale = scaleQuantile()
     .domain(projects.map((d) => d.funds))
@@ -24,7 +41,7 @@ const Maps = ({ projects, markers }) => {
   const mk = markers
     .map((x, i) => {
       if (projects[i]) {
-        return { ...projects[i], ...x, id: projects[i].id };
+        return { ...projects[i], ...x, uuid: x.uuid };
       }
       return false;
     })
@@ -35,12 +52,12 @@ const Maps = ({ projects, markers }) => {
       projectionConfig={{ scale: 800, projection: "geoEqualEarth" }}
       style={{ height: 550, width: "100%", background: "#f0f8ff" }}
     >
-      <ZoomableGroup zoom={2} center={[-5, 17]} maxZoom={2} minZoom={2}>
+      <ZoomableGroup zoom={10} center={[-7, 13.5]} maxZoom={10} minZoom={10}>
         <Geographies geography={geoUrl}>
           {({ geographies }) =>
             geographies.map((geo, i) => {
               const cs = mk.filter(
-                (x) => x.GID_2 === geo.properties.GID_2 && x.funds
+                (x) => x.location === geo.properties.GID_2 && x.funds
               );
               const cur = cs.reduce((x, i) => x + i.funds, 0);
               return (
@@ -72,18 +89,36 @@ const Maps = ({ projects, markers }) => {
           }
         </Geographies>
         {mk
-          .filter((x) => (province === null ? x : x.GID_2 === province))
+          .filter((x) => (province === null ? x : x.location === province))
           .map((props) => (
-            <Marker key={props.id} coordinates={props.coordinates}>
-              <circle
-                data-aos="zoom-in"
-                r={1.8}
-                fill="#f2f5fc"
-                stroke="#acbcf9"
-                strokeWidth={1}
-                className="points"
-              />
-            </Marker>
+            <Tooltip
+              title={
+                <span>
+                  {props.uuid}
+                  <CloseCircleTwoTone
+                    twoToneColor="#eb2f96"
+                    style={{ marginLeft: "5px" }}
+                    onClick={() => handleEditTab(props.uuid)}
+                  />
+                </span>
+              }
+              visible={() => tabs.includes(props.uuid)}
+            >
+              <Marker
+                key={props.uuid}
+                coordinates={props.coordinates}
+                onClick={() => handleMarkerClick(props)}
+              >
+                <circle
+                  data-aos="zoom-in"
+                  r={1}
+                  fill="#f2f5fc"
+                  stroke={props.status === "Compliant" ? "#acbcf9" : "red"}
+                  strokeWidth={0.5}
+                  className="points"
+                />
+              </Marker>
+            </Tooltip>
           ))}
       </ZoomableGroup>
     </ComposableMap>

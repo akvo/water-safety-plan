@@ -11,15 +11,13 @@ text {
 }
 
 circle {
-  .points {
-    cursor: pointer;
-  }
+  cursor: pointer;
 
-  .points:hover {
+  &:hover {
     stroke: #ddd;
   }
+}
 
-  .points:hover ~ text.points {
-    fill: #eb455b;
-  }
+.points:hover ~ text.points {
+  fill: #eb455b;
 }

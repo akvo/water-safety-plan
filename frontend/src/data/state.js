@@ -1,7 +1,7 @@
 import { Store } from "pullstate";
 
 const defaultState = {
-  menuIsCollapsed: true,
+  tabs: [],
 };
 
 export const UIStore = new Store(defaultState);
