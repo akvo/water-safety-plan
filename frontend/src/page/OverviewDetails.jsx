@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Tabs, Divider, Row, Col } from "antd";
+import { Tabs, Divider, Row, Col, Button, Image } from "antd";
 import { UIStore } from "../data/state";
-import { DashboardOutlined, CloseCircleTwoTone } from "@ant-design/icons";
+import {
+  DashboardOutlined,
+  CloseCircleTwoTone,
+  PieChartTwoTone,
+  ProfileTwoTone,
+} from "@ant-design/icons";
 
 const { TabPane } = Tabs;
 
@@ -18,24 +23,34 @@ const Details = ({ config, instance }) => {
       <>
         <Divider orientation="left">{d?.[submission.alias]}</Divider>
         {photo && (
-          <Row>
-            <Col span={24} align="center">
-              <img
+          <Row style={{ height: 310, overflow: "hidden", marginBottom: 20 }}>
+            <Col
+              span={24}
+              className="image-overlay"
+              style={{
+                backgroundImage: `url("${d?.[photo.alias]}")`,
+                height: 320,
+              }}
+            ></Col>
+            <Col span={24} align="center" style={{ marginTop: -320 }}>
+              <Image
                 src={d?.[photo.alias]}
                 alt={d?.[photo.alias]}
-                style={{ height: "320px" }}
+                height={320}
               />
             </Col>
           </Row>
         )}
-        {config.definition.map((x) => (
-          <Row justify="end">
-            <Col span={12}>{x.name}</Col>
-            <Col span={12} style={{ textAlign: "right" }}>
-              {d?.[x.alias]}
-            </Col>
-          </Row>
-        ))}
+        {config.definition
+          .filter((x) => x.name !== "Photo" || x.name !== "Submission Date")
+          .map((x) => (
+            <Row justify="end">
+              <Col span={12}>{x.name}</Col>
+              <Col span={12} style={{ textAlign: "right" }}>
+                {d?.[x.alias]}
+              </Col>
+            </Row>
+          ))}
       </>
     );
   });
@@ -53,6 +68,14 @@ const OverviewDetails = () => {
       <Tabs tabPosition="left" id="overview-tabs-detail" size="small">
         {configs.map((c) => (
           <TabPane tab={c.name} key={c.name}>
+            <Button style={{ marginRight: 10 }}>
+              <PieChartTwoTone />
+              Charts
+            </Button>
+            <Button>
+              <ProfileTwoTone />
+              Data
+            </Button>
             <Details config={c} instance={instance} />
           </TabPane>
         ))}
