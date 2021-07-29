@@ -7,7 +7,7 @@ import {
   Marker,
 } from "react-simple-maps";
 import { Tooltip } from "antd";
-import { CloseCircleTwoTone } from "@ant-design/icons";
+import { CloseCircleTwoTone, PlayCircleTwoTone } from "@ant-design/icons";
 import { scaleQuantile } from "d3-scale";
 import "../styles/maps.scss";
 import { UIStore } from "../data/state";
@@ -26,9 +26,9 @@ const handleMarkerClick = ({ uuid }) => {
   }
 };
 
-const Maps = ({ projects, markers, handleEditTab }) => {
+const Maps = ({ projects, markers, handleEditTab, handleActiveTab }) => {
   const { currentState } = UIStore;
-  const { tabs } = currentState;
+  const { tabs, tabActive } = currentState;
   const [province, setProvince] = useState(null);
   const colorScale = scaleQuantile()
     .domain(projects.map((d) => d.funds))
@@ -100,9 +100,16 @@ const Maps = ({ projects, markers, handleEditTab }) => {
                     style={{ marginLeft: "5px" }}
                     onClick={() => handleEditTab(props.uuid)}
                   />
+                  <PlayCircleTwoTone
+                    twoToneColor="#52c41a"
+                    style={{ marginLeft: "5px" }}
+                    onClick={() => handleActiveTab(props.uuid)}
+                  />
                 </span>
               }
-              visible={() => tabs.includes(props.uuid)}
+              visible={() =>
+                tabActive === "overview" && tabs.includes(props.uuid)
+              }
             >
               <Marker
                 key={props.uuid}

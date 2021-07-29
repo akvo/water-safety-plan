@@ -3,11 +3,12 @@ import { Tabs } from "antd";
 import "../styles/overview.scss";
 import { DashboardOutlined, CloseCircleTwoTone } from "@ant-design/icons";
 import { Maps } from "../components";
+import OverviewDetails from "./OverviewDetails";
 import { UIStore } from "../data/state";
 
 const { TabPane } = Tabs;
 
-const Main = ({ handleEditTab }) => {
+const Main = ({ handleEditTab, handleActiveTab }) => {
   const [data, setData] = useState([]);
   const [markers, setMarkers] = useState([]);
 
@@ -27,26 +28,45 @@ const Main = ({ handleEditTab }) => {
   }, [markers]);
 
   return (
-    <Maps projects={data} markers={markers} handleEditTab={handleEditTab} />
+    <Maps
+      projects={data}
+      markers={markers}
+      handleEditTab={handleEditTab}
+      handleActiveTab={handleActiveTab}
+    />
   );
 };
 
 const Overview = () => {
-  const currentTabs = UIStore.useState((t) => t.tabs);
+  const tabList = UIStore.useState((t) => t.tabs);
+  const tabActive = UIStore.useState((t) => t.tabActive);
   const handleEditTab = (x) => {
     UIStore.update((u) => {
-      u.tabs = currentTabs.filter((t) => t !== x);
+      u.tabs = tabList.filter((t) => t !== x);
+      u.tabActive =
+        tabActive !== x
+          ? tabActive === "overview"
+            ? "overview"
+            : tabActive
+          : "overview";
+    });
+  };
+
+  const handleActiveTab = (x) => {
+    UIStore.update((u) => {
+      u.tabActive = x;
     });
   };
 
   return (
     <Tabs
       hideAdd
-      defaultActiveKey="1"
+      activeKey={tabActive}
       type="editable-card"
       size="small"
       id="overview"
       onEdit={handleEditTab}
+      onTabClick={handleActiveTab}
     >
       <TabPane
         tab={
@@ -58,16 +78,16 @@ const Overview = () => {
         key={"overview"}
         closable={false}
       >
-        <Main handleEditTab={handleEditTab} />
+        <Main handleEditTab={handleEditTab} handleActiveTab={handleActiveTab} />
       </TabPane>
-      {currentTabs.map((x, i) => (
+      {tabList.map((x, i) => (
         <TabPane
           tab={x}
           key={x}
           closable={true}
           closeIcon={<CloseCircleTwoTone twoToneColor="#eb2f96" />}
         >
-          Content of {x}
+          <OverviewDetails />
         </TabPane>
       ))}
     </Tabs>
