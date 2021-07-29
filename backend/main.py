@@ -11,6 +11,21 @@ with open('./data/configs.json', 'r') as cfg:
     api_config = json.load(cfg)
 
 registration_config = [d for d in api_config if d['type'] == "registration"]
+
+uuid_config = {}
+for ac in api_config:
+    ac_name = ac['file']
+    if "registration" in ac_name:
+        ac_name = "registration"
+    for dfn in ac['definition']:
+        if dfn['original'] == "uuid":
+            uuid_config.update(
+                {ac_name: {
+                    "alias": dfn["alias"],
+                    "type": ac["type"]
+                }})
+
+
 metadata = [
     "Submission Date", "Lat", "Lon", "Uuid", "Photo", "Status", "Location"
 ]
@@ -35,7 +50,18 @@ def replace_alias(x):
     return x.lower()
 
 
+def get_uuid():
+    df = pd.read_csv("./data/registration.csv")
+    alias = uuid_config["registration"]["alias"]
+    df = df[[alias]]
+    uuid = {}
+    for d in df.to_dict("records"):
+        uuid.update({d[alias]: d[alias]})
+    return uuid
+
+
 FileName = Enum('FileName', get_csv_files("csv"))
+Instance = Enum('Instance', get_uuid())
 
 
 class DataType(str, Enum):
@@ -54,6 +80,14 @@ def read_main():
     return {"message": "Hello World"}
 
 
+@app.get('/config')
+def get_all_config():
+    data = [d for d in api_config]
+    for d in data:
+        d.update({'data_url': "/api/data/{}".format(d['file'])})
+    return data
+
+
 @app.get('/config/{data_type:path}')
 def get_config(data_type: DataType):
     if data_type == "registration":
@@ -61,7 +95,19 @@ def get_config(data_type: DataType):
     data = [d for d in api_config if d['type'] == data_type]
     for d in data:
         d.update({'data_url': "/api/data/{}".format(d['file'])})
-        del d['file']
+    return data
+
+
+@app.get("/datapoint/{instance:path}")
+def get_instance(instance: Instance):
+    data = []
+    i = str(instance).replace("Instance.", "")
+    for ucf in uuid_config:
+        curr = uuid_config[ucf]
+        file = [get_csv_files(ucf, True)][0]
+        df = pd.read_csv(file)
+        df = df[df[curr["alias"]] == i]
+        data.append({ucf: df.to_dict("records")})
     return data
 
 
