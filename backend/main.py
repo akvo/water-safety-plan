@@ -25,7 +25,6 @@ for ac in api_config:
                     "type": ac["type"]
                 }})
 
-
 metadata = [
     "Submission Date", "Lat", "Lon", "Uuid", "Photo", "Status", "Location"
 ]
@@ -98,19 +97,6 @@ def get_config(data_type: DataType):
     return data
 
 
-@app.get("/datapoint/{instance:path}")
-def get_instance(instance: Instance):
-    data = []
-    i = str(instance).replace("Instance.", "")
-    for ucf in uuid_config:
-        curr = uuid_config[ucf]
-        file = [get_csv_files(ucf, True)][0]
-        df = pd.read_csv(file)
-        df = df[df[curr["alias"]] == i]
-        data.append({ucf: df.to_dict("records")})
-    return data
-
-
 @app.get('/datapoints')
 def get_data_point():
     data = pd.read_csv("./data/registration.csv")
@@ -122,6 +108,22 @@ def get_data_point():
     data["coordinates"] = data.apply(lambda x: [x["lon"], x["lat"]], axis=1)
     meta = [d for d in list(data) if len(d) > 1]
     return data[meta].to_dict('records')
+
+
+@app.get("/datapoints/{instance:path}")
+def get_instance(instance: Instance):
+    data = []
+    i = str(instance).replace("Instance.", "")
+    for ucf in uuid_config:
+        curr = uuid_config[ucf]
+        file = [get_csv_files(ucf, True)][0]
+        df = pd.read_csv(file)
+        df = df[df[curr["alias"]] == i]
+        data.append({
+            "data": df.to_dict("records"),
+            "name": "registration" if "registration" in ucf else ucf
+        })
+    return data
 
 
 @app.get('/data/{file_name:path}')
