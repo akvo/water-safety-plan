@@ -1,9 +1,47 @@
+from enum import Enum
 import uvicorn
 from fastapi import FastAPI
 import pandas as pd
 import json
+import os
 
 app = FastAPI(root_path="/api")
+
+with open('./data/configs.json', 'r') as cfg:
+    api_config = json.load(cfg)
+
+registration_config = [d for d in api_config if d['type'] == "registration"]
+metadata = [
+    "Submission Date", "Lat", "Lon", "Uuid", "Photo", "Status", "Location"
+]
+
+
+def get_csv_files(name, path=False):
+    csv_files = {}
+    for root, dirs, files in os.walk("./data"):
+        for file in files:
+            if name in file:
+                if not path:
+                    file = file.replace('.csv', '')
+                    csv_files.update({file: file})
+                else:
+                    return os.path.join(root, file)
+    return csv_files
+
+
+def replace_alias(x):
+    x = x.replace("#", "")
+    x = x.replace(" ", "_")
+    return x.lower()
+
+
+FileName = Enum('FileName', get_csv_files("csv"))
+
+
+class DataType(str, Enum):
+    registration = "registration"
+    monitoring = "monitoring"
+    non_compliance = "non-compliance"
 
 
 @app.get("/health-check")
@@ -16,44 +54,35 @@ def read_main():
     return {"message": "Hello World"}
 
 
-@app.get('/config')
-def get_config():
-    with open('./data/config.json', 'r') as cfg:
-        return json.load(cfg)
+@app.get('/config/{data_type:path}')
+def get_config(data_type: DataType):
+    if data_type == "registration":
+        return registration_config
+    data = [d for d in api_config if d['type'] == data_type]
+    for d in data:
+        d.update({'data_url': "/api/data/{}".format(d['file'])})
+        del d['file']
+    return data
 
 
-@app.get('/data')
-def get_data():
-    return pd.read_csv('./data/data.csv').to_dict('records')
+@app.get('/datapoints')
+def get_data_point():
+    data = pd.read_csv("./data/registration.csv")
+    definition = registration_config[0]['definition']
+    for d in definition:
+        if d['name'] in metadata:
+            data = data.rename(
+                columns={d["alias"]: replace_alias(d["original"])})
+    data["coordinates"] = data.apply(lambda x: [x["lon"], x["lat"]], axis=1)
+    meta = [d for d in list(data) if len(d) > 1]
+    return data[meta].to_dict('records')
 
 
-@app.get('/data/raw')
-def get_data_raw(page: int = 1, limit: int = 0):
-    with open('./data/config.json', 'r') as cfg:
-        cfg = json.load(cfg)
-    columns = {}
-    for col in cfg:
-        columns.update({col["alias"]: col["original"]})
-    data = pd.read_csv('./data/data.csv')
-    if limit:
-        end = limit * page
-        if page == 1:
-            limit = 0
-        count = data.shape[1]
-        data = data.iloc[limit:end]
-        data = data.rename(columns=columns)
-        next = page + 1
-        prev = None
-        if page > 1:
-            prev = 'api/data/raw?page={}&limit={}'.format(page - 1, limit)
-        return {
-            'prev_page': prev,
-            'count': count,
-            'next_page': f'api/data/raw?page={next}&limit={limit}',
-            'data': data.to_dict('records')
-        }
-    data = data.rename(columns=columns)
-    return data.to_dict('records')
+@app.get('/data/{file_name:path}')
+def get_data(file_name: FileName):
+    file = str(file_name).replace("FileName.", "")
+    file = get_csv_files(file, True)
+    return pd.read_csv(file).to_dict('records')
 
 
 if __name__ == "__main__":
