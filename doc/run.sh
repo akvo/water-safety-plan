@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-docker build -t wsp/data-generator:latest .
-docker run --rm -v "$(pwd)":/app wsp/data-generator
-cp -r ./data/ ../backend/data/
+docker run --rm -v "$(pwd)":/app "$(docker build -q .)"
+cp -r data ../backend/data
 rm -rf data
