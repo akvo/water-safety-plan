@@ -1,3 +1,7 @@
+.ant-divider-inner-text {
+  font-weight: bold;
+}
+
 #overview-tabs {
   margin: -24px;
 
@@ -32,6 +36,10 @@
 #overview-detail {
   width: calc(100% - 200px);
   margin-left: 10px;
+
+  .table-description {
+    padding: 20px;
+  }
 
   .image-overlay {
     background-repeat: no-repeat;

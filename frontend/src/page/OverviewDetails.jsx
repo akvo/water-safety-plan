@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Menu, Divider, Row, Col, Button, Image } from "antd";
+import { Menu, Divider, Table, Row, Col, Button, Image } from "antd";
 import { UIStore } from "../data/state";
 import { PieChartTwoTone, ProfileTwoTone } from "@ant-design/icons";
 import Chart from "../lib/chart";
 import { titleCase } from "../lib/util";
 import groupBy from "lodash/groupBy";
+import camelCase from "lodash/camelCase";
 
 const { SubMenu } = Menu;
 
@@ -73,12 +74,24 @@ const ChartCollections = ({ config, instance }) => {
   });
 };
 
+const OverviewTable = ({ data, title }) => {
+  const columns = Object.keys(data[0]).map((x) => ({ title: x, dataIndex: x }));
+  data = data.map((x, i) => ({ key: `${i}`, ...x }));
+  return (
+    <Row className={"table-description"}>
+      <Divider orientation="left">{title}</Divider>
+      <Table columns={columns} dataSource={data} pagination={false} />
+    </Row>
+  );
+};
+
 const OverviewDetails = () => {
   const [page, setPage] = useState("charts");
   const [selected, setSelected] = useState("Description");
   const instances = UIStore.useState((i) => i.instances);
   const tabActive = UIStore.useState((t) => t.tabActive);
   const configs = UIStore.useState((c) => c.config);
+  const statics = UIStore.useState((c) => c.static);
   const instance = instances[tabActive];
   const groups = groupBy(configs, "type");
   const current = configs.filter((x) => x.name === selected)[0];
@@ -136,6 +149,10 @@ const OverviewDetails = () => {
           ) : (
             <Details config={current} instance={instance} />
           )}
+          {current.type === "registration" &&
+            statics?.map((s, si) => (
+              <OverviewTable key={si} data={s.data} title={s.table} />
+            ))}
         </div>
       </Row>
     );

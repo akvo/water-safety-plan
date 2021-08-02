@@ -4,15 +4,21 @@ const defaultState = {
   tabs: [],
   tabActive: "overview",
   instances: {},
-  configs: [],
+  config: [],
+  static: [],
 };
 
 export const UIStore = new Store(defaultState);
 
 fetch("/api/config")
   .then((res) => res.json())
-  .then((data) =>
-    UIStore.update((c) => {
-      c.config = data;
-    })
-  );
+  .then((cfg) => {
+    fetch("/api/static")
+      .then((res) => res.json())
+      .then((stc) => {
+        UIStore.update((c) => {
+          c.static = stc;
+          c.config = cfg;
+        });
+      });
+  });

@@ -133,5 +133,17 @@ def get_data(file_name: FileName):
     return pd.read_csv(file).to_dict('records')
 
 
+@app.get('/guide')
+def get_guide():
+    with open('./data/guides.json', 'r') as d:
+        return json.load(d)
+
+
+@app.get('/static')
+def get_static():
+    with open('./data/statics.json', 'r') as d:
+        return json.load(d)
+
+
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=5000)
