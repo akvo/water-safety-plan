@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^12.1.10",
     "antd": "^4.16.8",
     "axios": "^0.21.1",
+    "currency-formatter": "^1.5.8",
     "d3-geo": "^2.0.1",
     "d3-scale": "^3.2.4",
     "echarts": "^5.1.2",

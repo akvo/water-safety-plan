@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./styles/app.scss";
-import { Layout, Menu, Tabs } from "antd";
+import { Layout, Menu } from "antd";
 import Logo from "./images/logo.png";
 import {
   DashboardOutlined,
@@ -8,7 +8,6 @@ import {
   ControlOutlined,
   SettingOutlined,
   TeamOutlined,
-  InboxOutlined,
 } from "@ant-design/icons";
 import * as Page from "./page";
 

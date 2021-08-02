@@ -1,12 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Tabs, Divider, Row, Col, Button, Image } from "antd";
 import { UIStore } from "../data/state";
-import {
-  DashboardOutlined,
-  CloseCircleTwoTone,
-  PieChartTwoTone,
-  ProfileTwoTone,
-} from "@ant-design/icons";
+import { PieChartTwoTone, ProfileTwoTone } from "@ant-design/icons";
+import Chart from "../lib/chart";
 
 const { TabPane } = Tabs;
 
@@ -56,8 +52,27 @@ const Details = ({ config, instance }) => {
   });
 };
 
+const ChartCollections = ({ config, instance }) => {
+  const inst = instance.find(
+    (x) => x.name === config.file || x.name === config.type
+  );
+  const dateConfig = config.definition.find(
+    (x) => x.name === "Submission Date"
+  );
+  const chartVars = config.definition.filter(
+    (x) => x.dtype === "int64" || x.dtype === "float64"
+  );
+  return chartVars.map((c, ic) => {
+    const data = inst.data.map((x) => ({
+      name: x[dateConfig.alias],
+      value: x[c.alias],
+    }));
+    return <Chart key={ic} data={data} title={c.original} type="LINE" />;
+  });
+};
+
 const OverviewDetails = () => {
-  const [current, setCurrent] = useState(false);
+  const [page, setPage] = useState("details");
   const instances = UIStore.useState((i) => i.instances);
   const tabActive = UIStore.useState((t) => t.tabActive);
   const configs = UIStore.useState((c) => c.config);
@@ -68,15 +83,33 @@ const OverviewDetails = () => {
       <Tabs tabPosition="left" id="overview-tabs-detail" size="small">
         {configs.map((c) => (
           <TabPane tab={c.name} key={c.name}>
-            <Button style={{ marginRight: 10 }}>
-              <PieChartTwoTone />
-              Charts
-            </Button>
-            <Button>
-              <ProfileTwoTone />
-              Data
-            </Button>
-            <Details config={c} instance={instance} />
+            {c.type === "monitoring" && (
+              <Row>
+                <Button
+                  style={{ marginRight: 10 }}
+                  onClick={() => setPage("details")}
+                  type={page === "details" ? "primary" : "secondary"}
+                >
+                  <ProfileTwoTone />
+                  Data
+                </Button>
+                <Button
+                  onClick={() => setPage("charts")}
+                  type={page === "details" ? "secondary" : "primary"}
+                >
+                  <PieChartTwoTone />
+                  Charts
+                </Button>
+                <Divider />
+              </Row>
+            )}
+            {page !== "details" && c.type === "monitoring" ? (
+              <Row>
+                <ChartCollections config={c} instance={instance} />
+              </Row>
+            ) : (
+              <Details config={c} instance={instance} />
+            )}
           </TabPane>
         ))}
       </Tabs>

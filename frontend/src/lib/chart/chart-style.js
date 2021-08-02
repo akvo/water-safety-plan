@@ -33,7 +33,7 @@ export const TextStyle = {
 
 export const Color = {
   color: [
-    "#a43332",
+    "#1890ff",
     "#609ba7",
     "#3D588A",
     "#5C616A",
@@ -50,30 +50,11 @@ export const visualMap = {
   left: "right",
   top: "top",
   inRange: {
-    color: ["#f4f7b5", "#a43332"],
+    color: ["#f4f7b5", "#1890ff"],
   },
   itemHeight: "520px",
   text: ["High", "Low"],
   calculable: true,
-};
-
-export const oldColor = {
-  color: [
-    "#007bff",
-    "#ff7043",
-    "#2BBBAD",
-    "#ffbb33",
-    "#ff4444",
-    "#33b5e5",
-    "#00C851",
-    "#4285F4",
-    "#aa66cc",
-    "#b2dfdb",
-    "#b3e5fc",
-    "#8d6e63",
-    "#f78bba",
-    "#231fa1",
-  ],
 };
 
 export const rsrColor = {

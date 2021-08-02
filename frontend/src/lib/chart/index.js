@@ -1,28 +1,25 @@
 import React from "react";
-import { Col } from "antd";
+import { Col, Card } from "antd";
 import ReactECharts from "echarts-for-react";
 import Bar from "./Bar";
-import Maps from "./Maps";
 import Pie from "./Pie";
-import TreeMap from "./TreeMap";
 import BarStack from "./BarStack";
 import BarGroup from "./BarGroup";
 import LineStack from "./LineStack";
+import Line from "./Line";
 
 export const generateOptions = ({ type, data }, extra) => {
   switch (type) {
-    case "MAPS":
-      return Maps(data, extra);
     case "PIE":
       return Pie(data, extra);
     case "DOUGHNUT":
       return Pie(data, extra, true);
-    case "TREEMAP":
-      return TreeMap(data, extra);
     case "BARSTACK":
       return BarStack(data, extra);
     case "BARGROUP":
       return BarGroup(data, extra);
+    case "LINE":
+      return Line(data, extra);
     case "LINESTACK":
       return LineStack(data, extra);
     default:
@@ -33,7 +30,7 @@ export const generateOptions = ({ type, data }, extra) => {
 const Chart = ({
   type,
   title = "",
-  height = "500px",
+  height = 450,
   span = 12,
   data,
   extra = {},
@@ -41,8 +38,12 @@ const Chart = ({
   const option = generateOptions({ type: type, data: data }, extra);
   return (
     <Col span={12} style={{ height: height }}>
-      <h3>{title}</h3>
-      <ReactECharts option={option} />
+      <Card title={title}>
+        <ReactECharts
+          option={option}
+          style={{ height: height - 50, width: "100%" }}
+        />
+      </Card>
     </Col>
   );
 };

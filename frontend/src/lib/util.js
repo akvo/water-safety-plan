@@ -1,3 +1,5 @@
+const currencyFormatter = require("currency-formatter");
+
 export const formatNumber = (x) => {
   return currencyFormatter.format(x, {
     decimal: ".",
