@@ -72,7 +72,7 @@ const ChartCollections = ({ config, instance }) => {
 };
 
 const OverviewDetails = () => {
-  const [page, setPage] = useState("details");
+  const [page, setPage] = useState("charts");
   const instances = UIStore.useState((i) => i.instances);
   const tabActive = UIStore.useState((t) => t.tabActive);
   const configs = UIStore.useState((c) => c.config);
