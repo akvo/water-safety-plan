@@ -90,8 +90,9 @@ const Maps = ({ projects, markers, handleEditTab, handleActiveTab }) => {
         </Geographies>
         {mk
           .filter((x) => (province === null ? x : x.location === province))
-          .map((props) => (
+          .map((props, pi) => (
             <Tooltip
+              key={pi}
               title={
                 <span>
                   {props.uuid}

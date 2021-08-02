@@ -14,13 +14,13 @@ const Details = ({ config, instance }) => {
   const inst = instance.find(
     (x) => x.name === config.file || x.name === config.type
   );
-  return inst?.data?.map((d) => {
+  return inst?.data?.map((d, di) => {
     const submission = config.definition.find(
       (x) => x.name === "Submission Date"
     );
     const photo = config.definition.find((x) => x.name === "Photo");
     return (
-      <>
+      <div key={di}>
         <Divider orientation="left">{d?.[submission.alias]}</Divider>
         {photo && (
           <Row style={{ height: 310, overflow: "hidden", marginBottom: 20 }}>
@@ -43,15 +43,15 @@ const Details = ({ config, instance }) => {
         )}
         {config.definition
           .filter((x) => x.name !== "Photo" || x.name !== "Submission Date")
-          .map((x) => (
-            <Row justify="end">
+          .map((x, xi) => (
+            <Row justify="end" key={xi}>
               <Col span={12}>{x.name}</Col>
               <Col span={12} style={{ textAlign: "right" }}>
                 {d?.[x.alias]}
               </Col>
             </Row>
           ))}
-      </>
+      </div>
     );
   });
 };
