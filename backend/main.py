@@ -15,7 +15,7 @@ registration_config = [d for d in api_config if d['type'] == "registration"]
 uuid_config = {}
 for ac in api_config:
     ac_name = ac['file']
-    if "registration" in ac_name:
+    if "registration" == ac['type']:
         ac_name = "registration"
     for dfn in ac['definition']:
         if dfn['original'] == "uuid":

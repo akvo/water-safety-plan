@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { Tabs, Divider, Row, Col, Button, Image } from "antd";
+import { Menu, Divider, Row, Col, Button, Image } from "antd";
 import { UIStore } from "../data/state";
 import { PieChartTwoTone, ProfileTwoTone } from "@ant-design/icons";
 import Chart from "../lib/chart";
+import { titleCase } from "../lib/util";
+import groupBy from "lodash/groupBy";
 
-const { TabPane } = Tabs;
+const { SubMenu } = Menu;
 
 const Details = ({ config, instance }) => {
   const inst = instance.find(
@@ -16,7 +18,7 @@ const Details = ({ config, instance }) => {
     );
     const photo = config.definition.find((x) => x.name === "Photo");
     return (
-      <div key={di}>
+      <div key={di} style={{ padding: "20px" }}>
         <Divider orientation="left">{d?.[submission.alias]}</Divider>
         {photo && (
           <Row style={{ height: 310, overflow: "hidden", marginBottom: 20 }}>
@@ -73,50 +75,73 @@ const ChartCollections = ({ config, instance }) => {
 
 const OverviewDetails = () => {
   const [page, setPage] = useState("charts");
+  const [selected, setSelected] = useState("Description");
   const instances = UIStore.useState((i) => i.instances);
   const tabActive = UIStore.useState((t) => t.tabActive);
   const configs = UIStore.useState((c) => c.config);
   const instance = instances[tabActive];
+  const groups = groupBy(configs, "type");
+  const current = configs.filter((x) => x.name === selected)[0];
 
   if (configs?.length && tabActive !== "overview") {
     return (
-      <Tabs tabPosition="left" id="overview-tabs-detail" size="small">
-        {configs.map((c) => (
-          <TabPane tab={c.name} key={c.name}>
-            {c.type === "monitoring" && (
-              <Row>
-                <Button
-                  style={{ marginRight: 10 }}
-                  onClick={() => setPage("details")}
-                  type={page === "details" ? "primary" : "secondary"}
-                >
-                  <ProfileTwoTone />
-                  Data
-                </Button>
-                <Button
-                  onClick={() => setPage("charts")}
-                  type={page === "details" ? "secondary" : "primary"}
-                >
-                  <PieChartTwoTone />
-                  Charts
-                </Button>
-                <Divider />
-              </Row>
-            )}
-            {page !== "details" && c.type === "monitoring" ? (
-              <Row>
-                <ChartCollections config={c} instance={instance} />
-              </Row>
-            ) : (
-              <Details config={c} instance={instance} />
-            )}
-          </TabPane>
-        ))}
-      </Tabs>
+      <Row>
+        <Menu
+          mode="inline"
+          id="overview-menu"
+          style={{ maxWidth: "200px" }}
+          onSelect={(x) => setSelected(x.key)}
+        >
+          {Object.keys(groups).map((g) => {
+            const menu = configs.filter((x) => x.type === g);
+            if (menu.length > 1) {
+              return (
+                <SubMenu key={g} title={titleCase(g)}>
+                  {menu.map((x, i) => (
+                    <Menu.Item key={x.name} style={{ paddingLeft: "25px" }}>
+                      {x.name}
+                    </Menu.Item>
+                  ))}
+                </SubMenu>
+              );
+            }
+            return <Menu.Item key={menu[0].name}>{menu[0].name}</Menu.Item>;
+          })}
+        </Menu>
+        <div id="overview-detail">
+          {current.type === "monitoring" && (
+            <Row>
+              <Button
+                style={{ marginRight: 10 }}
+                onClick={() => setPage("details")}
+                type={page === "details" ? "primary" : "secondary"}
+              >
+                <ProfileTwoTone />
+                Data
+              </Button>
+              <Button
+                onClick={() => setPage("charts")}
+                type={page === "details" ? "secondary" : "primary"}
+              >
+                <PieChartTwoTone />
+                Charts
+              </Button>
+              <Divider />
+            </Row>
+          )}
+          {page !== "details" && current.type === "monitoring" ? (
+            <Row>
+              <ChartCollections config={current} instance={instance} />
+            </Row>
+          ) : (
+            <Details config={current} instance={instance} />
+          )}
+        </div>
+      </Row>
     );
   }
 
-  return <div>Loading</div>;
+  return "";
 };
 
 export default OverviewDetails;

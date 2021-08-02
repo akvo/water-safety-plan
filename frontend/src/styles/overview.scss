@@ -24,16 +24,14 @@
   }
 }
 
-#overview-tabs-detail {
-  margin-left: -16px;
+#overview-menu {
+  margin-left: -15px;
+  width: 100%;
+}
 
-  .ant-tabs-nav {
-    .ant-tabs-tab {
-      &.ant-tabs-tab-active {
-        background: #e6f6ff;
-      }
-    }
-  }
+#overview-detail {
+  width: calc(100% - 200px);
+  margin-left: 10px;
 
   .image-overlay {
     background-repeat: no-repeat;

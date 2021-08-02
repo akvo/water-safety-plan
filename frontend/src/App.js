@@ -18,10 +18,10 @@ const MainMenu = () => {
   return (
     <Menu theme="light" mode="inline" defaultSelectedKeys={["overview"]}>
       <Menu.Item key="overview" icon={<DashboardOutlined />}>
-        Overview
+        Water Points
       </Menu.Item>
       <Menu.Item key="vas" icon={<FundOutlined />}>
-        Value Added Services
+        External Wash Data
       </Menu.Item>
       <Menu.SubMenu
         key="administration"
