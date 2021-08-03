@@ -229,18 +229,18 @@ const OverviewDetails = () => {
             <Row>
               <Button
                 style={{ marginRight: 10 }}
-                onClick={() => setPage("details")}
-                type={page === "details" ? "primary" : "secondary"}
-              >
-                <ProfileTwoTone />
-                Data
-              </Button>
-              <Button
                 onClick={() => setPage("charts")}
                 type={page === "details" ? "secondary" : "primary"}
               >
                 <PieChartTwoTone />
                 Visual
+              </Button>
+              <Button
+                onClick={() => setPage("details")}
+                type={page === "details" ? "primary" : "secondary"}
+              >
+                <ProfileTwoTone />
+                Data
               </Button>
               <Divider />
             </Row>
