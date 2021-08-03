@@ -1,34 +1,26 @@
 import React, { useState } from "react";
-import { Menu, Divider, Table, Row, Col, Button, Image } from "antd";
+import { Menu, Divider, Table, Row, Col, Card, Button, Image } from "antd";
 import { UIStore } from "../data/state";
-import { PieChartTwoTone, ProfileTwoTone } from "@ant-design/icons";
+import {
+  PieChartTwoTone,
+  ProfileTwoTone,
+  ScheduleTwoTone,
+  AlertTwoTone,
+  BookTwoTone,
+} from "@ant-design/icons";
 import Chart from "../lib/chart";
 import { titleCase } from "../lib/util";
 import groupBy from "lodash/groupBy";
 import camelCase from "lodash/camelCase";
 
 const { SubMenu } = Menu;
-
-const ChartCollections = ({ config, instance }) => {
-  const inst = instance.find(
-    (x) => x.name === config.file || x.name === config.type
-  );
-  const dateConfig = config.definition.find(
-    (x) => x.name === "Submission Date"
-  );
-  const chartVars = config.definition.filter(
-    (x) => x.dtype === "int64" || x.dtype === "float64"
-  );
-  return chartVars.map((c, ic) => {
-    const data = inst.data.map((x) => ({
-      name: x[dateConfig.alias],
-      value: x[c.alias],
-    }));
-    return <Chart key={ic} data={data} title={c.original} type="LINE" />;
-  });
+const iconMenu = {
+  registration: <BookTwoTone />,
+  monitoring: <ScheduleTwoTone />,
+  "non-compliance": <AlertTwoTone />,
 };
 
-const OverviewTable = ({ data, title, scroll = {} }) => {
+const OverviewTable = ({ data, title, scroll = {}, clean = false }) => {
   if (!data.length) {
     return "";
   }
@@ -41,6 +33,17 @@ const OverviewTable = ({ data, title, scroll = {} }) => {
       return { title: x, dataIndex: x };
     });
   data = data.map((x, i) => ({ key: `${i}`, ...x }));
+  if (clean) {
+    return (
+      <Table
+        scroll={scroll}
+        columns={columns}
+        dataSource={data}
+        pagination={false}
+        size="small"
+      />
+    );
+  }
   return (
     <Row className={"table-description"}>
       <Divider orientation="left">{title}</Divider>
@@ -53,6 +56,43 @@ const OverviewTable = ({ data, title, scroll = {} }) => {
       />
     </Row>
   );
+};
+
+const ChartCollections = ({ config, instance }) => {
+  const inst = instance.find(
+    (x) => x.name === config.file || x.name === config.type
+  );
+  const dateConfig = config.definition.find(
+    (x) => x.name === "Submission Date"
+  );
+  const chartVars = config.definition.filter(
+    (x) => x.dtype === "int64" || x.dtype === "float64" || x.options
+  );
+  return chartVars.map((c, ic) => {
+    let data = inst.data.map((x) => ({
+      name: x[dateConfig.alias],
+      value: x[c.alias],
+    }));
+    if (c.options) {
+      data = data.map((x) => ({
+        "Submission Date": x.name,
+        Value: x.value,
+      }));
+      return (
+        <Col span={12}>
+          <Card title={c.name}>
+            <OverviewTable
+              data={data}
+              title={""}
+              scroll={{ y: 360 }}
+              clean={true}
+            />
+          </Card>
+        </Col>
+      );
+    }
+    return <Chart key={ic} data={data} title={c.original} type="LINE" />;
+  });
 };
 
 const Details = ({ config, instance }) => {
@@ -141,7 +181,11 @@ const OverviewDetails = () => {
             const menu = configs.filter((x) => x.type === g);
             if (menu.length > 1) {
               return (
-                <SubMenu key={g} title={titleCase(g)}>
+                <SubMenu
+                  key={g}
+                  title={titleCase(g)}
+                  icon={iconMenu[menu[0].type]}
+                >
                   {menu.map((x, i) => (
                     <Menu.Item key={x.name} style={{ paddingLeft: "25px" }}>
                       {x.name}
@@ -150,7 +194,11 @@ const OverviewDetails = () => {
                 </SubMenu>
               );
             }
-            return <Menu.Item key={menu[0].name}>{menu[0].name}</Menu.Item>;
+            return (
+              <Menu.Item key={menu[0].name} icon={iconMenu[menu[0].type]}>
+                {menu[0].name}
+              </Menu.Item>
+            );
           })}
         </Menu>
         <div id="overview-detail">
@@ -169,7 +217,7 @@ const OverviewDetails = () => {
                 type={page === "details" ? "secondary" : "primary"}
               >
                 <PieChartTwoTone />
-                Charts
+                Visual
               </Button>
               <Divider />
             </Row>
