@@ -24,7 +24,7 @@ const OverviewTable = ({ data, title, scroll = {}, clean = false }) => {
   if (!data.length) {
     return "";
   }
-  const columns = Object.keys(data[0])
+  let columns = Object.keys(data[0])
     .filter((x) => x !== "Uuid")
     .map((x) => {
       if (x === "Submission Date") {
@@ -44,6 +44,25 @@ const OverviewTable = ({ data, title, scroll = {}, clean = false }) => {
       />
     );
   }
+  columns = columns.map((x) => {
+    return {
+      ...x,
+      render: (text) => {
+        if (typeof text === "string") {
+          if (text.includes("|")) {
+            return (
+              <ul>
+                {text.split("|").map((t, i) => (
+                  <li key={i}>{t}.</li>
+                ))}
+              </ul>
+            );
+          }
+        }
+        return text;
+      },
+    };
+  });
   return (
     <Row className={"table-description"}>
       <Divider orientation="left">{title}</Divider>
@@ -80,11 +99,15 @@ const ChartCollections = ({ config, instance }) => {
       }));
       return (
         <Col span={12}>
-          <Card title={c.name}>
+          <Card
+            title={c.name}
+            className="card-no-padding"
+            style={{ minHeight: "507px" }}
+          >
             <OverviewTable
               data={data}
               title={""}
-              scroll={{ y: 360 }}
+              scroll={{ y: 500 }}
               clean={true}
             />
           </Card>
