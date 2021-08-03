@@ -124,8 +124,14 @@ const OverviewDetails = () => {
                   icon={iconMenu[menu[0].type]}
                 >
                   {menu.map((x, i) => (
-                    <Menu.Item key={x.name} style={{ paddingLeft: "25px" }}>
-                      {x.name}
+                    <Menu.Item
+                      key={x.name}
+                      style={{
+                        paddingLeft: "25px",
+                        borderBottom: "solid 1px #ddd",
+                      }}
+                    >
+                      {i + 1}. {x.name}
                     </Menu.Item>
                   ))}
                 </SubMenu>
