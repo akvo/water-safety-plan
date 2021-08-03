@@ -7,74 +7,26 @@ import {
   ScheduleTwoTone,
   AlertTwoTone,
   BookTwoTone,
+  MessageTwoTone,
+  ExperimentTwoTone,
+  ControlTwoTone,
+  ToolTwoTone,
 } from "@ant-design/icons";
 import Chart from "../lib/chart";
 import { titleCase } from "../lib/util";
 import groupBy from "lodash/groupBy";
 import camelCase from "lodash/camelCase";
+import { Monitoring, DataList, CommentList } from "../components";
 
 const { SubMenu } = Menu;
 const iconMenu = {
   registration: <BookTwoTone />,
   monitoring: <ScheduleTwoTone />,
   "non-compliance": <AlertTwoTone />,
-};
-
-const OverviewTable = ({ data, title, scroll = {}, clean = false }) => {
-  if (!data.length) {
-    return "";
-  }
-  let columns = Object.keys(data[0])
-    .filter((x) => x !== "Uuid")
-    .map((x) => {
-      if (x === "Submission Date") {
-        return { title: x, dataIndex: x, fixed: "left" };
-      }
-      return { title: x, dataIndex: x };
-    });
-  data = data.map((x, i) => ({ key: `${i}`, ...x }));
-  if (clean) {
-    return (
-      <Table
-        scroll={scroll}
-        columns={columns}
-        dataSource={data}
-        pagination={false}
-        size="small"
-      />
-    );
-  }
-  columns = columns.map((x) => {
-    return {
-      ...x,
-      render: (text) => {
-        if (typeof text === "string") {
-          if (text.includes("|")) {
-            return (
-              <ul>
-                {text.split("|").map((t, i) => (
-                  <li key={i}>{t}.</li>
-                ))}
-              </ul>
-            );
-          }
-        }
-        return text;
-      },
-    };
-  });
-  return (
-    <Row className={"table-description"}>
-      <Divider orientation="left">{title}</Divider>
-      <Table
-        scroll={scroll}
-        columns={columns}
-        dataSource={data}
-        pagination={false}
-        size="small"
-      />
-    </Row>
-  );
+  improvement: <ToolTwoTone />,
+  operation: <ControlTwoTone />,
+  research: <ExperimentTwoTone />,
+  feedback: <MessageTwoTone />,
 };
 
 const ChartCollections = ({ config, instance }) => {
@@ -104,12 +56,7 @@ const ChartCollections = ({ config, instance }) => {
             className="card-no-padding"
             style={{ minHeight: "507px" }}
           >
-            <OverviewTable
-              data={data}
-              title={""}
-              scroll={{ y: 500 }}
-              clean={true}
-            />
+            <DataList data={data} title={""} scroll={{ y: 500 }} clean={true} />
           </Card>
         </Col>
       );
@@ -119,65 +66,32 @@ const ChartCollections = ({ config, instance }) => {
 };
 
 const Details = ({ config, instance }) => {
-  let inst = instance.find(
+  instance = instance.find(
     (x) => x.name === config.file || x.name === config.type
   );
-  if (config.type === "non-compliance") {
-    inst = inst?.data?.map((x) => {
-      let res = {};
-      config.definition.forEach((d) => {
-        res = { ...res, [d.name]: x[d.alias] };
-      });
-      return res;
+  const data = instance?.data?.map((x) => {
+    let res = {};
+    config.definition.forEach((d) => {
+      res = { ...res, [d.name]: x[d.alias] };
     });
-    return (
-      <OverviewTable
-        data={inst}
-        title={"Non Compliance"}
-        scroll={{ x: 1500 }}
-      />
-    );
-  }
-  return inst?.data?.map((d, di) => {
-    const submission = config.definition.find(
-      (x) => x.name === "Submission Date"
-    );
-    const photo = config.definition.find((x) => x.name === "Photo");
-    return (
-      <div key={di} style={{ padding: "20px" }}>
-        <Divider orientation="left">{d?.[submission.alias]}</Divider>
-        {photo && (
-          <Row style={{ height: 310, overflow: "hidden", marginBottom: 20 }}>
-            <Col
-              span={24}
-              className="image-overlay"
-              style={{
-                backgroundImage: `url("${d?.[photo.alias]}")`,
-                height: 320,
-              }}
-            ></Col>
-            <Col span={24} align="center" style={{ marginTop: -320 }}>
-              <Image
-                src={d?.[photo.alias]}
-                alt={d?.[photo.alias]}
-                height={320}
-              />
-            </Col>
-          </Row>
-        )}
-        {config.definition
-          .filter((x) => x.name !== "Photo" || x.name !== "Submission Date")
-          .map((x, xi) => (
-            <Row justify="end" key={xi}>
-              <Col span={12}>{x.name}</Col>
-              <Col span={12} style={{ textAlign: "right" }}>
-                {d?.[x.alias]}
-              </Col>
-            </Row>
-          ))}
-      </div>
-    );
+    return res;
   });
+  switch (config.type) {
+    case "non-compliance":
+      return (
+        <DataList data={data} title={"Non Compliance"} scroll={{ x: 1500 }} />
+      );
+    case "operation":
+      return "";
+    case "research":
+      return "";
+    case "improvement":
+      return "";
+    case "feedback":
+      return <CommentList data={data} />;
+    default:
+      return <Monitoring instance={instance} config={config} />;
+  }
 };
 
 const OverviewDetails = () => {
@@ -254,7 +168,7 @@ const OverviewDetails = () => {
           )}
           {current.type === "registration" &&
             statics?.map((s, si) => (
-              <OverviewTable key={si} data={s.data} title={s.table} />
+              <DataList key={si} data={s.data} title={s.table} />
             ))}
         </div>
       </Row>
