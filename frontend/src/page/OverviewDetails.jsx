@@ -9,10 +9,72 @@ import camelCase from "lodash/camelCase";
 
 const { SubMenu } = Menu;
 
-const Details = ({ config, instance }) => {
+const ChartCollections = ({ config, instance }) => {
   const inst = instance.find(
     (x) => x.name === config.file || x.name === config.type
   );
+  const dateConfig = config.definition.find(
+    (x) => x.name === "Submission Date"
+  );
+  const chartVars = config.definition.filter(
+    (x) => x.dtype === "int64" || x.dtype === "float64"
+  );
+  return chartVars.map((c, ic) => {
+    const data = inst.data.map((x) => ({
+      name: x[dateConfig.alias],
+      value: x[c.alias],
+    }));
+    return <Chart key={ic} data={data} title={c.original} type="LINE" />;
+  });
+};
+
+const OverviewTable = ({ data, title, scroll = {} }) => {
+  if (!data.length) {
+    return "";
+  }
+  const columns = Object.keys(data[0])
+    .filter((x) => x !== "Uuid")
+    .map((x) => {
+      if (x === "Submission Date") {
+        return { title: x, dataIndex: x, fixed: "left" };
+      }
+      return { title: x, dataIndex: x };
+    });
+  data = data.map((x, i) => ({ key: `${i}`, ...x }));
+  return (
+    <Row className={"table-description"}>
+      <Divider orientation="left">{title}</Divider>
+      <Table
+        scroll={scroll}
+        columns={columns}
+        dataSource={data}
+        pagination={false}
+        size="small"
+      />
+    </Row>
+  );
+};
+
+const Details = ({ config, instance }) => {
+  let inst = instance.find(
+    (x) => x.name === config.file || x.name === config.type
+  );
+  if (config.type === "non-compliance") {
+    inst = inst?.data?.map((x) => {
+      let res = {};
+      config.definition.forEach((d) => {
+        res = { ...res, [d.name]: x[d.alias] };
+      });
+      return res;
+    });
+    return (
+      <OverviewTable
+        data={inst}
+        title={"Non Compliance"}
+        scroll={{ x: 1500 }}
+      />
+    );
+  }
   return inst?.data?.map((d, di) => {
     const submission = config.definition.find(
       (x) => x.name === "Submission Date"
@@ -53,36 +115,6 @@ const Details = ({ config, instance }) => {
       </div>
     );
   });
-};
-
-const ChartCollections = ({ config, instance }) => {
-  const inst = instance.find(
-    (x) => x.name === config.file || x.name === config.type
-  );
-  const dateConfig = config.definition.find(
-    (x) => x.name === "Submission Date"
-  );
-  const chartVars = config.definition.filter(
-    (x) => x.dtype === "int64" || x.dtype === "float64"
-  );
-  return chartVars.map((c, ic) => {
-    const data = inst.data.map((x) => ({
-      name: x[dateConfig.alias],
-      value: x[c.alias],
-    }));
-    return <Chart key={ic} data={data} title={c.original} type="LINE" />;
-  });
-};
-
-const OverviewTable = ({ data, title }) => {
-  const columns = Object.keys(data[0]).map((x) => ({ title: x, dataIndex: x }));
-  data = data.map((x, i) => ({ key: `${i}`, ...x }));
-  return (
-    <Row className={"table-description"}>
-      <Divider orientation="left">{title}</Divider>
-      <Table columns={columns} dataSource={data} pagination={false} />
-    </Row>
-  );
 };
 
 const OverviewDetails = () => {
