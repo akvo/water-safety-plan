@@ -1,5 +1,5 @@
 # Water Safety Plan Demo
-[![Build Status](https://akvo.semaphoreci.com/badges/water-safety-plan/branches/master.svg?style=shields)](https://akvo.semaphoreci.com/projects/water-safety-plan)
+[![Build Status](https://akvo.semaphoreci.com/badges/water-safety-plan/branches/main.svg?style=shields)](https://akvo.semaphoreci.com/projects/water-safety-plan)
 
 https://wsp.akvotest.org
 
