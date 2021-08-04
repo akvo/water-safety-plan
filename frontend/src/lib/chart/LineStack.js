@@ -1,10 +1,4 @@
-import {
-  Easing,
-  Color,
-  TextStyle,
-  backgroundColor,
-  Icons,
-} from "./chart-style.js";
+import { Easing, Color, TextStyle, backgroundColor } from "./chart-style.js";
 import _ from "lodash";
 
 const LineStack = (data, extra) => {

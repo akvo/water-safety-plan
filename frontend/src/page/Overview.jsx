@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Tabs, Row, Col, Card, Divider, Tag } from "antd";
+import { Tabs, Tag } from "antd";
 import "../styles/overview.scss";
 import { DashboardOutlined, CloseCircleTwoTone } from "@ant-design/icons";
 import { Maps } from "../components";

@@ -17,7 +17,6 @@ import {
   LikeOutlined,
   DislikeFilled,
   LikeFilled,
-  InfoCircleOutlined,
 } from "@ant-design/icons";
 
 const { TextArea } = Input;
@@ -71,6 +70,7 @@ const CommentList = ({ data }) => {
           <Divider orientation="left">User Feedback</Divider>
           {data.map((x, i) => (
             <Comment
+              key={i}
               actions={actions}
               author={<a>{x["Name"]}</a>}
               avatar={<Avatar src={avt[x["Name"]] || avt.etc} alt="Han Solo" />}

@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col, Divider, Table, Tag } from "antd";
+import { Row, Divider, Table, Tag } from "antd";
 
 const DataRow = ({ text }) => {
   if (text.includes("|")) {

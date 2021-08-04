@@ -4,7 +4,6 @@ import {
   Legend,
   TextStyle,
   backgroundColor,
-  Icons,
 } from "./chart-style.js";
 import sumBy from "lodash/sumBy";
 
@@ -105,8 +104,7 @@ const Pie = (data, extra, Doughnut = false) => {
         label: {
           normal: {
             formatter: function (params) {
-              let values = params.data.value;
-              return "Total" + "\n" + values;
+              return `Total\n${params.data.value}`;
             },
             show: !Doughnut,
             position: "center",

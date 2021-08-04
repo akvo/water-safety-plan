@@ -7,7 +7,6 @@ import {
   Legend,
 } from "./chart-style.js";
 import { formatNumber } from "../util.js";
-import sum from "lodash/sum";
 import sortBy from "lodash/sortBy";
 import reverse from "lodash/reverse";
 

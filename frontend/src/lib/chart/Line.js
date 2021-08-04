@@ -1,16 +1,5 @@
-import {
-  Easing,
-  Color,
-  TextStyle,
-  backgroundColor,
-  Icons,
-} from "./chart-style.js";
-import { formatNumber } from "../util.js";
-import sum from "lodash/sum";
-import min from "lodash/min";
-import max from "lodash/max";
+import { Easing, Color, TextStyle, backgroundColor } from "./chart-style.js";
 import sortBy from "lodash/sortBy";
-import reverse from "lodash/reverse";
 import { UIStore } from "../../data/state";
 
 const Line = (data, extra, title) => {

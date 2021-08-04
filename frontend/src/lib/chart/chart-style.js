@@ -1,5 +1,3 @@
-import { formatNumber } from "../util.js";
-
 export const popupFormatter = (params) => {
   var value = (params.value + "").split(".");
   value = value[0].replace(/(\d{1,3})(?=(?:\d{3})+(?!\d))/g, "$1,");

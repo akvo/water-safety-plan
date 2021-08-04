@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Menu, Divider, Row, Col, Card, Button, Image } from "antd";
+import { Menu, Divider, Row, Col, Card, Button } from "antd";
 import { UIStore } from "../data/state";
 import {
   PieChartTwoTone,
@@ -15,7 +15,6 @@ import {
 import Chart from "../lib/chart";
 import { titleCase } from "../lib/util";
 import groupBy from "lodash/groupBy";
-import camelCase from "lodash/camelCase";
 import { Monitoring, DataList, CommentList } from "../components";
 
 const { SubMenu } = Menu;
@@ -50,7 +49,7 @@ const ChartCollections = ({ config, instance }) => {
         Value: x.value,
       }));
       return (
-        <Col span={12}>
+        <Col span={12} key={ic}>
           <Card
             title={c.name}
             className="card-no-padding"
@@ -135,6 +134,8 @@ const OverviewDetails = () => {
                       style={{
                         paddingLeft: "25px",
                         borderBottom: "solid 1px #ddd",
+                        marginBottom: 0,
+                        marginTop: 0,
                       }}
                     >
                       {i + 1}. {x.name}
