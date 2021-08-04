@@ -1,5 +1,11 @@
 # Water Safety Plan Demo
-[![Build Status](https://akvo.semaphoreci.com/badges/water-safety-plan/branches/main.svg?style=shields)](https://akvo.semaphoreci.com/projects/water-safety-plan)
+[![Build Status](https://akvo.semaphoreci.com/badges/water-safety-plan/branches/main.svg?style=shields)](https://akvo.semaphoreci.com/projects/water-safety-plan) [![Repo Size](https://img.shields.io/github/repo-size/akvo/water-safety-plan)](https://img.shields.io/github/repo-size/akvo/water-safety-plan) [![Languages](https://img.shields.io/github/languages/count/akvo/water-safety-plan
+)](https://img.shields.io/github/languages/count/akvo/water-safety-plan
+) [![Issues](https://img.shields.io/github/issues/akvo/water-safety-plan
+)](https://img.shields.io/github/issues/akvo/water-safety-plan
+) [![Last Commit](https://img.shields.io/github/last-commit/akvo/water-safety-plan/main
+)](https://img.shields.io/github/last-commit/akvo/water-safety-plan/main)
+
 
 https://wsp.akvotest.org
 
