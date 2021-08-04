@@ -32,11 +32,11 @@ const Maps = ({ projects, markers, handleEditTab, handleActiveTab }) => {
   const [province, setProvince] = useState(null);
   const colorScale = scaleQuantile()
     .domain(projects.map((d) => d.funds))
-    .range(["#f2f5fc", "#f9fafe", "#acbbf9"]);
+    .range(["#f2f5fc", "#f9fafe", "#1890ff"]);
 
   const colorScaleHover = scaleQuantile()
     .domain(projects.map((d) => d.funds))
-    .range(["#f9fafe", "#acbbf9", "#4155f1"]);
+    .range(["#f9fafe", "#acbbf9", "#1890ff"]);
 
   const mk = markers
     .map((x, i) => {
@@ -48,88 +48,92 @@ const Maps = ({ projects, markers, handleEditTab, handleActiveTab }) => {
     .filter((x) => x);
 
   return (
-    <ComposableMap
-      projectionConfig={{ scale: 800, projection: "geoEqualEarth" }}
-      style={{ height: 550, width: "100%", background: "#f0f8ff" }}
-    >
-      <ZoomableGroup zoom={10} center={[-7, 13.5]} maxZoom={10} minZoom={10}>
-        <Geographies geography={geoUrl}>
-          {({ geographies }) =>
-            geographies.map((geo, i) => {
-              const cs = mk.filter(
-                (x) => x.location === geo.properties.GID_2 && x.funds
-              );
-              const cur = cs.reduce((x, i) => x + i.funds, 0);
-              return (
-                <Geography
-                  key={i}
-                  onClick={(e) =>
-                    setProvince(
-                      cur === 0 || province ? null : geo.properties.GID_2
-                    )
-                  }
-                  geography={geo}
-                  style={{
-                    default: {
-                      fill: cur !== 0 ? colorScale(cur) : "#EAEAEC",
-                      stroke: "#FFF",
-                      strokeWidth: 0.1,
-                      outline: "none",
-                    },
-                    hover: {
-                      fill: cur !== 0 ? colorScaleHover(cur) : "#EAEAEC",
-                      stroke: "#FFF",
-                      strokeWidth: 0.1,
-                      outline: "none",
-                    },
-                  }}
-                />
-              );
-            })
-          }
-        </Geographies>
-        {mk
-          .filter((x) => (province === null ? x : x.location === province))
-          .map((props, pi) => (
-            <Tooltip
-              key={pi}
-              title={
-                <span>
-                  {props.uuid}
-                  <CloseCircleTwoTone
-                    twoToneColor="#eb2f96"
-                    style={{ marginLeft: "5px" }}
-                    onClick={() => handleEditTab(props.uuid)}
+    <>
+      <ComposableMap
+        projectionConfig={{ scale: 800, projection: "geoEqualEarth" }}
+        style={{ height: 650, width: "100%", background: "#f0f8ff" }}
+      >
+        <ZoomableGroup zoom={9} center={[-6.5, 13.3]} maxZoom={10} minZoom={10}>
+          <Geographies geography={geoUrl}>
+            {({ geographies }) =>
+              geographies.map((geo, i) => {
+                const cs = mk.filter(
+                  (x) => x.location === geo.properties.GID_2 && x.funds
+                );
+                const cur = cs.reduce((x, i) => x + i.funds, 0);
+                return (
+                  <Geography
+                    key={i}
+                    onClick={(e) =>
+                      setProvince(
+                        cur === 0 || province ? null : geo.properties.GID_2
+                      )
+                    }
+                    geography={geo}
+                    style={{
+                      default: {
+                        fill: cur !== 0 ? colorScale(cur) : "#EAEAEC",
+                        stroke: "#FFF",
+                        strokeWidth: 0.1,
+                        outline: "none",
+                      },
+                      hover: {
+                        fill: cur !== 0 ? colorScaleHover(cur) : "#EAEAEC",
+                        stroke: "#FFF",
+                        strokeWidth: 0.1,
+                        outline: "none",
+                      },
+                    }}
                   />
-                  <PlayCircleTwoTone
-                    twoToneColor="#52c41a"
-                    style={{ marginLeft: "5px" }}
-                    onClick={() => handleActiveTab(props.uuid)}
-                  />
-                </span>
-              }
-              visible={() =>
-                tabActive === "overview" && tabs.includes(props.uuid)
-              }
-            >
-              <Marker
-                key={props.uuid}
-                coordinates={props.coordinates}
-                onClick={() => handleMarkerClick(props)}
+                );
+              })
+            }
+          </Geographies>
+          {mk
+            .filter((x) => (province === null ? x : x.location === province))
+            .map((props, pi) => (
+              <Tooltip
+                key={pi}
+                title={
+                  <span>
+                    {props.uuid}
+                    <CloseCircleTwoTone
+                      twoToneColor="#eb2f96"
+                      style={{ marginLeft: "5px" }}
+                      onClick={() => handleEditTab(props.uuid)}
+                    />
+                    <PlayCircleTwoTone
+                      twoToneColor="#52c41a"
+                      style={{ marginLeft: "5px" }}
+                      onClick={() => handleActiveTab(props.uuid)}
+                    />
+                  </span>
+                }
+                visible={() =>
+                  tabActive === "overview" && tabs.includes(props.uuid)
+                }
               >
-                <circle
-                  data-aos="zoom-in"
-                  r={1}
-                  fill="#f2f5fc"
-                  stroke={props.status === "Compliant" ? "#acbcf9" : "red"}
-                  strokeWidth={0.5}
-                  className="points"
-                />
-              </Marker>
-            </Tooltip>
-          ))}
-      </ZoomableGroup>
-    </ComposableMap>
+                <Marker
+                  key={props.uuid}
+                  coordinates={props.coordinates}
+                  onClick={() => handleMarkerClick(props)}
+                >
+                  <circle
+                    data-aos="zoom-in"
+                    r={props.status === "Compliant" ? 0.5 : 0.8}
+                    fill={props.status === "Compliant" ? "#e6f7ff" : "#ffa39e"}
+                    stroke={
+                      props.status === "Compliant" ? "#acbcf9" : "#cf1322"
+                    }
+                    strokeWidth={0.3}
+                    className="points"
+                  />
+                </Marker>
+              </Tooltip>
+            ))}
+        </ZoomableGroup>
+      </ComposableMap>
+    </>
   );
 };
 

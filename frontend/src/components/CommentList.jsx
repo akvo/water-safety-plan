@@ -1,12 +1,33 @@
 import React, { createElement, useState } from "react";
-import { Row, Col, Card, Divider, Comment, Tooltip, Avatar } from "antd";
+import {
+  Row,
+  Col,
+  Card,
+  Divider,
+  Comment,
+  Tooltip,
+  Avatar,
+  Form,
+  Input,
+  Button,
+} from "antd";
 import moment from "moment";
 import {
   DislikeOutlined,
   LikeOutlined,
   DislikeFilled,
   LikeFilled,
+  InfoCircleOutlined,
 } from "@ant-design/icons";
+
+const { TextArea } = Input;
+
+const avt = {
+  Franky: "https://akvo.org/wp-content/uploads/2019/11/Franky-Li-240.jpg",
+  Mert: "https://akvo.org/wp-content/uploads/2019/03/mert-240-240x134.jpg",
+  etc:
+    "https://cdn1.vectorstock.com/i/thumb-large/22/05/male-profile-picture-vector-1862205.jpg",
+};
 
 const CommentList = ({ data }) => {
   const [likes, setLikes] = useState(0);
@@ -52,12 +73,7 @@ const CommentList = ({ data }) => {
             <Comment
               actions={actions}
               author={<a>{x["Name"]}</a>}
-              avatar={
-                <Avatar
-                  src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                  alt="Han Solo"
-                />
-              }
+              avatar={<Avatar src={avt[x["Name"]] || avt.etc} alt="Han Solo" />}
               content={<p>{x["Comments"]}</p>}
               datetime={
                 <Tooltip title={moment().format("YYYY-MM-DD HH:mm:ss")}>
@@ -66,6 +82,16 @@ const CommentList = ({ data }) => {
               }
             />
           ))}
+          <Divider orientation="left">Submit New Feedback</Divider>
+          <Form.Item>
+            <Input addonBefore="Email" placeholder="e.g john@akvo.org" />
+          </Form.Item>
+          <Form.Item>
+            <TextArea placeholder="Comments" />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary">Submit</Button>
+          </Form.Item>
         </Card>
       </Col>
     </Row>

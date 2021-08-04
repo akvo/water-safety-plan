@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Tabs, Row, Col, Card, Divider } from "antd";
+import { Tabs, Row, Col, Card, Divider, Tag } from "antd";
 import "../styles/overview.scss";
 import { DashboardOutlined, CloseCircleTwoTone } from "@ant-design/icons";
 import { Maps } from "../components";
@@ -28,33 +28,20 @@ const Main = ({ handleEditTab, handleActiveTab }) => {
   }, [markers]);
 
   return (
-    <>
+    <div style={{ position: "relative" }}>
       <Maps
         projects={data}
         markers={markers}
         handleEditTab={handleEditTab}
         handleActiveTab={handleActiveTab}
       />
-      <Row gutter={16}>
-        <Col span={8}>
-          <Card>
-            <Divider orientation="left">XXX Number</Divider>
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card>
-            <Divider orientation="left">
-              {markers?.length} Total Waterpoints
-            </Divider>
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card>
-            <Divider orientation="left">4 Districts</Divider>
-          </Card>
-        </Col>
-      </Row>
-    </>
+      <Tag color="red" style={{ position: "absolute", bottom: 20, right: 120 }}>
+        1 Compliance
+      </Tag>
+      <Tag color="blue" style={{ position: "absolute", bottom: 20, right: 10 }}>
+        {markers?.length} Waterpoints
+      </Tag>
+    </div>
   );
 };
 

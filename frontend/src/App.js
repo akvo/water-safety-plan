@@ -20,7 +20,11 @@ const MainMenu = () => {
       <Menu.Item key="overview" icon={<DashboardOutlined />}>
         Water Points
       </Menu.Item>
-      <Menu.Item key="vas" icon={<FundOutlined />}>
+      <Menu.Item
+        key="vas"
+        icon={<FundOutlined />}
+        onClick={() => window.open("https://pemmali.org/")}
+      >
         External Wash Data
       </Menu.Item>
       <Menu.SubMenu
