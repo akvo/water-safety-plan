@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Menu, Divider, Table, Row, Col, Card, Button, Image } from "antd";
+import { Menu, Divider, Row, Col, Card, Button, Image } from "antd";
 import { UIStore } from "../data/state";
 import {
   PieChartTwoTone,
@@ -56,7 +56,13 @@ const ChartCollections = ({ config, instance }) => {
             className="card-no-padding"
             style={{ minHeight: "507px" }}
           >
-            <DataList data={data} title={""} scroll={{ y: 500 }} clean={true} />
+            <DataList
+              data={data}
+              title={c.name}
+              scroll={{ y: 500 }}
+              clean={true}
+              config={config}
+            />
           </Card>
         </Col>
       );

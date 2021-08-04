@@ -6,6 +6,7 @@ const defaultState = {
   instances: {},
   config: [],
   static: [],
+  guide: [],
 };
 
 export const UIStore = new Store(defaultState);
@@ -16,9 +17,14 @@ fetch("/api/config")
     fetch("/api/static")
       .then((res) => res.json())
       .then((stc) => {
-        UIStore.update((c) => {
-          c.static = stc;
-          c.config = cfg;
-        });
+        fetch("/api/guide")
+          .then((res) => res.json())
+          .then((gd) => {
+            UIStore.update((c) => {
+              c.static = stc;
+              c.config = cfg;
+              c.guide = gd;
+            });
+          });
       });
   });

@@ -11,8 +11,33 @@ import min from "lodash/min";
 import max from "lodash/max";
 import sortBy from "lodash/sortBy";
 import reverse from "lodash/reverse";
+import { UIStore } from "../../data/state";
 
-const Line = (data, extra) => {
+const Line = (data, extra, title) => {
+  let guide = UIStore.useState((i) => i.guide);
+  guide = guide.find((x) => title.includes(x.question));
+  if (guide) {
+    guide = [
+      {
+        type: "line",
+        markLine: {
+          lineStyle: {
+            type: "dashed",
+            color: "red",
+          },
+          symbol: "circle",
+          label: {
+            show: true,
+            position: "middle",
+            formatter: "{b}",
+          },
+          data: [{ name: "WHO Guide", yAxis: guide.value }],
+        },
+      },
+    ];
+  } else {
+    guide = [];
+  }
   let values = [];
   let labels = [];
   data = !data ? [] : data;
@@ -73,9 +98,15 @@ const Line = (data, extra) => {
           lineStyle: {
             type: "dashed",
           },
-          data: [{ type: "average", name: "Average" }],
+          data: [{ type: "average", name: "Avg" }],
+          label: {
+            show: true,
+            position: "end",
+            formatter: "{b}\n{c}",
+          },
         },
       },
+      ...guide,
     ],
     ...Color,
     ...backgroundColor,

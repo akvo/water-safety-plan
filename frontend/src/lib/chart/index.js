@@ -8,7 +8,7 @@ import BarGroup from "./BarGroup";
 import LineStack from "./LineStack";
 import Line from "./Line";
 
-export const generateOptions = ({ type, data }, extra) => {
+export const generateOptions = ({ type, data, title }, extra) => {
   switch (type) {
     case "PIE":
       return Pie(data, extra);
@@ -19,7 +19,7 @@ export const generateOptions = ({ type, data }, extra) => {
     case "BARGROUP":
       return BarGroup(data, extra);
     case "LINE":
-      return Line(data, extra);
+      return Line(data, extra, title);
     case "LINESTACK":
       return LineStack(data, extra);
     default:
@@ -35,7 +35,10 @@ const Chart = ({
   data,
   extra = {},
 }) => {
-  const option = generateOptions({ type: type, data: data }, extra);
+  const option = generateOptions(
+    { type: type, data: data, title: title },
+    extra
+  );
   return (
     <Col span={12} style={{ height: height }}>
       <Card title={title}>
