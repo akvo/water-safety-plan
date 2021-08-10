@@ -157,24 +157,36 @@ const OverviewDetails = () => {
               <Button
                 style={{ marginRight: 10 }}
                 onClick={() => setPage("charts")}
-                type={page === "details" ? "secondary" : "primary"}
+                type={page === "charts" ? "primary" : "secondary"}
               >
                 <PieChartTwoTone />
                 Visual
               </Button>
               <Button
+                style={{ marginRight: 10 }}
                 onClick={() => setPage("details")}
                 type={page === "details" ? "primary" : "secondary"}
               >
                 <ProfileTwoTone />
                 Data
               </Button>
+              <Button
+                onClick={() => setPage("form")}
+                type={page === "form" ? "primary" : "secondary"}
+              >
+                <ProfileTwoTone />
+                Monitoring Form
+              </Button>
               <Divider />
             </Row>
           )}
           {page !== "details" && current.type === "monitoring" ? (
             <Row>
-              <ChartCollections config={current} instance={instance} />
+              {page === "form" ? (
+                ""
+              ) : (
+                <ChartCollections config={current} instance={instance} />
+              )}
             </Row>
           ) : (
             <Details config={current} instance={instance} />
