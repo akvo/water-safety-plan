@@ -30,7 +30,13 @@ const Monitoring = ({ instance, config }) => {
           </Row>
         )}
         {config.definition
-          .filter((x) => x.name !== "Photo" || x.name !== "Submission Date")
+          .filter((x) => x.name !== "Photo")
+          .filter((x) => x.name !== "Submission Date")
+          .filter((x) => x.name !== "Location")
+          .filter((x) => x.name !== "Lat")
+          .filter((x) => x.name !== "Lon")
+          .filter((x) => x.name !== "Water Tech")
+          .filter((x) => x.name !== "Uuid")
           .map((x, xi) => (
             <Row justify="end" key={xi}>
               <Col span={12}>{x.name}</Col>
