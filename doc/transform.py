@@ -7,6 +7,7 @@ import itertools
 import string
 import uuid
 import json
+import string
 from pathlib import Path
 
 source = './dummy.xlsx'
@@ -32,15 +33,15 @@ def find_unit(c):
     return False
 
 
-def trim_uuid(x):
-    return "-".join(str(x).split("-")[1:-1])
-
-
 all_sheets = load_workbook(source, read_only=True).sheetnames
 sheets = list(filter(lambda x: '|' in x, all_sheets))
 registration = list(filter(lambda x: 'registration' in x, sheets))[0]
 regdf = pd.read_excel(source, registration)
-uuid_list = [uuid.uuid4() for _ in range(len(regdf.index))]
+string_list = list(string.ascii_uppercase)
+uuid_list = []
+
+for i in range(0, len(regdf.index)):
+    uuid_list.append("Community-{}".format(string_list[i]))
 
 settings = list(filter(lambda x: 'settings' in x, all_sheets))[0]
 settings = pd.read_excel(source, settings)
@@ -80,10 +81,11 @@ for tab in sheets:
     sheet = tab.split('|')
     sheet = {
         'type': sheet[0],
-        'name': sheet[1], 'file': sheet[1].lower().replace(' ', '_') }
+        'name': sheet[1],
+        'file': sheet[1].lower().replace(' ', '_')
+    }
     df = pd.read_excel(source, tab)
     df['uuid'] = df['datapoint'].apply(lambda x: uuid_list[int(x) - 1])
-    df['uuid'] = df['uuid'].apply(lambda x: trim_uuid(x))
     df = df.drop(columns=ignore, axis=1)
     strings = list(itertools.islice(excel_cols(), df.shape[1]))
     for idx, col in enumerate(list(df.columns)):
