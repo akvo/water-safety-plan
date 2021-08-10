@@ -4,10 +4,12 @@ import { Layout, Menu } from "antd";
 import Logo from "./images/logo.png";
 import {
   DashboardOutlined,
+  PlusCircleOutlined,
   FundOutlined,
   ControlOutlined,
   SettingOutlined,
   TeamOutlined,
+  SnippetsOutlined,
 } from "@ant-design/icons";
 import * as Page from "./page";
 
@@ -18,14 +20,10 @@ const MainMenu = () => {
   return (
     <Menu theme="light" mode="inline" defaultSelectedKeys={["overview"]}>
       <Menu.Item key="overview" icon={<DashboardOutlined />}>
-        Water Points
+        Overview Dashboard
       </Menu.Item>
-      <Menu.Item
-        key="vas"
-        icon={<FundOutlined />}
-        onClick={() => window.open("https://pemmali.org/")}
-      >
-        External Wash Data
+      <Menu.Item key="new" icon={<PlusCircleOutlined />}>
+        Add New Waterpoint
       </Menu.Item>
       <Menu.SubMenu
         key="administration"
@@ -39,6 +37,16 @@ const MainMenu = () => {
           Account Setting
         </Menu.Item>
       </Menu.SubMenu>
+      <Menu.Item key="reports" icon={<SnippetsOutlined />}>
+        Reports
+      </Menu.Item>
+      <Menu.Item
+        key="vas"
+        icon={<FundOutlined />}
+        onClick={() => window.open("https://pemmali.org/")}
+      >
+        External Wash Data
+      </Menu.Item>
     </Menu>
   );
 };

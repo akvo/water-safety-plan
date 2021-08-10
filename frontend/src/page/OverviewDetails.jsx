@@ -11,6 +11,7 @@ import {
   ExperimentTwoTone,
   ControlTwoTone,
   ToolTwoTone,
+  DiffTwoTone,
 } from "@ant-design/icons";
 import Chart from "../lib/chart";
 import { titleCase } from "../lib/util";
@@ -174,7 +175,7 @@ const OverviewDetails = () => {
                 onClick={() => setPage("form")}
                 type={page === "form" ? "primary" : "secondary"}
               >
-                <ProfileTwoTone />
+                <DiffTwoTone />
                 Monitoring Form
               </Button>
               <Divider />
