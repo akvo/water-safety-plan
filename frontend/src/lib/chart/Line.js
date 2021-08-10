@@ -1,11 +1,15 @@
 import { Easing, Color, TextStyle, backgroundColor } from "./chart-style.js";
 import sortBy from "lodash/sortBy";
+import maxBy from "lodash/maxBy";
 import { UIStore } from "../../data/state";
 
 const Line = (data, extra, title) => {
   let guide = UIStore.useState((i) => i.guide);
+  let max = maxBy(data, "value");
+  max = max.value;
   guide = guide.find((x) => title.includes(x.question));
   if (guide) {
+    max = max < guide.value ? guide.value : max;
     guide = [
       {
         type: "line",
@@ -20,7 +24,7 @@ const Line = (data, extra, title) => {
             position: "middle",
             formatter: "{b}",
           },
-          data: [{ name: "WHO Guide", yAxis: guide.value }],
+          data: [{ name: "WHO Guideline", yAxis: guide.value }],
         },
       },
     ];
@@ -61,7 +65,7 @@ const Line = (data, extra, title) => {
       },
     },
     grid: {
-      top: "10px",
+      top: "20px",
       left: "10%",
       right: "10%",
       containLabel: true,
@@ -78,22 +82,15 @@ const Line = (data, extra, title) => {
     },
     yAxis: {
       type: "value",
+      max: max,
+      axisLabel: {
+        show: true,
+      },
     },
     series: [
       {
         data: values,
         type: "line",
-        markLine: {
-          lineStyle: {
-            type: "dashed",
-          },
-          data: [{ type: "average", name: "Avg" }],
-          label: {
-            show: true,
-            position: "end",
-            formatter: "{b}\n{c}",
-          },
-        },
       },
       ...guide,
     ],
